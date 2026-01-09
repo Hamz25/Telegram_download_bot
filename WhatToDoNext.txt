@@ -1,0 +1,6 @@
+1-fix insta story downlad ✖️
+2-get the thumbnail for every app ✖️
+3-convert to voice message ✖️
+4-better UI ✖️
+5- make a better code structure ✔️
+6- make it download pictures (more than one picture reel)
