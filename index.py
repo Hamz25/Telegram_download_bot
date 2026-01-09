@@ -2,14 +2,16 @@
 import asyncio
 import logging
 import os
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, types  # Corrected import
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.state import StatesGroup, State
+from aiogram.filters import CommandStart
 
 # --- CUSTOM MODULES ---
 from Token import TToken
-# Import your router objects from the handlers files
+from languages import get_text  # Added missing import
+# Import your router objects
 from handlers.ytHandle import router as youtube_router
 from handlers.SpotifyHandle import router as spotify_router
 from handlers.socialHandle import router as social_router
@@ -20,34 +22,31 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Global variable used by handlers
 botname = "-@spoonDbot"
 
-# Define States here so they can be imported by handlers
+# Initialize Dispatcher
+dp = Dispatcher()
+
+# Define States
 class BotStates(StatesGroup):
     choosing_quality = State()
 
-async def main():
-    # Initialize bot with global HTML parse mode
-    bot = Bot(token=TToken, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = Dispatcher()
+@dp.message(CommandStart())
+async def start_cmd(message: types.Message):
+    # Detect language or default to 'en'
+    lang = message.from_user.language_code if message.from_user.language_code in ["ar", "en"] else "en"
+    # get_text works now because it is imported
+    await message.answer(get_text("welcome", lang))
 
-    # Ensure download directory exists
+async def main():
+    bot = Bot(token=TToken, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    
     os.makedirs("downloads", exist_ok=True)
 
-    # Attach feature-specific routers to the main dispatcher
     dp.include_router(youtube_router)
     dp.include_router(spotify_router)
     dp.include_router(social_router)
 
     logging.info("Bot is starting...")
-    try:
-        await dp.start_polling(bot)
-    except Exception as e:
-        logging.error(f"Polling error: {e}")
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    while True:
-        try:
-            asyncio.run(main())
-        except Exception as e:
-            print(f"Connection lost, restarting in 5 seconds... Error: {e}")
-            import time
-            time.sleep(5)
+    asyncio.run(main())
