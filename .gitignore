@@ -1,0 +1,10 @@
+# Binaries
+*.exe
+FFMPEG/
+
+# Environment and Temp
+.venv/
+downloads/
+__pycache__/
+*.session
+*.json
