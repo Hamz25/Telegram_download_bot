@@ -17,7 +17,6 @@ def setup_session():
     try:
         L.load_session_from_file(INSTA_USERNAME, filename=SESSION_FILE)
     except FileNotFoundError:
-        # Instead of 'chrome', load from your specific cookie file
         if os.path.exists(Insta_cookies):
             print(f"DEBUG: Loading cookies from {Insta_cookies}")
             L.context.load_cookies_from_file(Insta_cookies)
