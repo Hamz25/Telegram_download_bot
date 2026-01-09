@@ -1,4 +1,4 @@
-TToken = "8005133585:AAG9Xpqy8nm4KJwGaz3MJEdXJmQglN9IQuc"
+TToken = "Add Your Bot token From @BotFather"
 
-Tiktok_cookies = 'cookies/Tiktok_cookies.txt'
-Insta_cookies = 'cookies/instagram_cookies.txt'
+Tiktok_cookies = 'cookies/Your TikTok Cookies here'
+Insta_cookies = 'cookies/Your Instagram Cookies here'
