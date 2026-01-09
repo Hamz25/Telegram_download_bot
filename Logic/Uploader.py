@@ -2,7 +2,7 @@ import os
 from aiogram import types
 from aiogram.types import FSInputFile
 from languages import get_text
-from Logic.cleanUp import cleanup  # Use absolute import to fix your error
+from Logic.cleanUp import cleanup  
 
 async def safe_upload(message: types.Message, path: str, lang: str, media_type: str = "video", 
                       caption: str = None, title: str = None, 
