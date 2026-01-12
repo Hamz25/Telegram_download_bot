@@ -1,8 +1,7 @@
 import yt_dlp
 import os
 
-def get_video_info(url):
-    """Fetches metadata without downloading."""
+def get_video_info(url): #this function will extract the video information without downloading
     ydl_opts = {'noplaylist': True, 'quiet': True}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:

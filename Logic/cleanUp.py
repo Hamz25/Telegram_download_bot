@@ -2,8 +2,8 @@ import os
 import shutil
 import asyncio
 import logging
-
-async def cleanup(path: str, delay: int = 3):
+#This function is to clean the files in downloads folder so when the user get its file the program will delete it 
+async def cleanup(path: str, delay: int = 3): 
     if not path or not os.path.exists(path):
         return
     await asyncio.sleep(delay)

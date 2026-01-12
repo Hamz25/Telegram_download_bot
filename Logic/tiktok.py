@@ -2,12 +2,12 @@ import os
 import yt_dlp
 from Token import Tiktok_cookies
 
-def download_tiktok(url):
-    os.makedirs('downloads', exist_ok=True)
+def download_tiktok(url): 
+    os.makedirs('downloads', exist_ok=True) #Make a folder 
 
     ydl_opts = {
-        'cookiefile': Tiktok_cookies,
-        'outtmpl': 'downloads/TikTok_%(id)s.%(ext)s',
+        'cookiefile': Tiktok_cookies, # so we can pass the TikTok security
+        'outtmpl': 'downloads/TikTok_%(id)s.%(ext)s', #Where the output will be
         'quiet': True,
         'no_warnings': True,
         'format': 'best',
