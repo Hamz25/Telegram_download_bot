@@ -7,26 +7,68 @@ from aiogram.types import FSInputFile
 
 from Logic.tiktok import download_tiktok
 from Logic.snapchat import download_snapchat_video
-from Logic.insta import download_insta_reel, download_insta_story
+from Logic.insta import download_insta_reel, download_insta_story, download_insta_post
 from languages import get_text
 from Logic.Uploader import safe_upload
 from Logic.cleanUp import cleanup
 
 router = Router()
 
+
+"""---------------------------------------------------------------------------------------------------------TikTok"""
 @router.message(F.text.contains("tiktok.com"))
 async def handle_tiktok(message: types.Message):
     lang = message.from_user.language_code
     status_msg = await message.answer(get_text("uploading", lang))
     await message.bot.send_chat_action(message.chat.id, ChatAction.UPLOAD_VIDEO)
+    
     try:
-        path = await asyncio.to_thread(download_tiktok, message.text)
-        await status_msg.delete()
-        await safe_upload(message, path, lang, caption=get_text("tiktok_success", lang))
+        # Extract URL from message
+        url = message.text.strip()
+        print(f"[HANDLER] Processing TikTok URL: {url}")
+
+        result = await asyncio.to_thread(download_tiktok,url)
+        path = None
+        # Run the download in a thread to keep the bot responsive
+        if isinstance(result,dict):
+            path = result.get('path') #Extract the path string from the dict
+        else:
+            path = result # it's already a string path (for videos)
+        
+        print(f"[HANDLER] Download result: {path}")
+        
+        # Delete status message
+        try:
+            await status_msg.delete()
+        except:
+            pass
+        
+        # Check if download was successful
+        if path and os.path.exists(path):
+            print(f"[HANDLER] Path exists, uploading...")
+            await safe_upload(message, path, lang, caption=get_text("tiktok_success", lang))
+        else:
+            print(f"[HANDLER] Download failed - path is None or doesn't exist")
+            await message.answer(get_text("no_media", lang))
+            
+            # Cleanup empty directory if it exists
+            if path and os.path.isdir(path):
+                await cleanup(path)
+                
     except Exception as e:
-        await status_msg.delete()
+        print(f"[HANDLER] Error in handle_tiktok: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        try:
+            await status_msg.delete()
+        except:
+            pass
         await message.answer(get_text("error_general", lang).format(e=e))
 
+
+
+"""---------------------------------------------------------------------------------------------------------Snapchat"""
 @router.message(F.text.contains("snapchat.com"))
 async def handle_snap(message: types.Message):
     lang = message.from_user.language_code
@@ -40,34 +82,50 @@ async def handle_snap(message: types.Message):
         await status_msg.delete()
         await message.answer(get_text("error_general", lang).format(e=e))
 
+
+
+"""---------------------------------------------------------------------------------------------------------Instagram"""
 @router.message(F.text.contains("instagram.com") | F.text.regexp(r'^@?[\w\.]+$'))
 async def handle_instagram(message: types.Message):
     if message.text.startswith("/"): return
+
     lang = message.from_user.language_code
+
     status_msg = await message.answer(get_text("uploading", lang))
+
     await message.bot.send_chat_action(message.chat.id, ChatAction.UPLOAD_VIDEO)
+
     url = message.text
-    try:
+
+    path = None
+
+    try: # case 1 stories 
         if "/stories/" in url or not url.startswith("http"):
             username = url.split("/stories/")[1].split("/")[0] if "http" in url else url.replace("@", "")
-            folder = await asyncio.to_thread(download_insta_story, username)
+            path = await asyncio.to_thread(download_insta_story, username)
+            caption = get_text("insta_stories", lang).format(username=username)
+
+        #case 2 posts
+        elif "/p/" in url:
+            path = await asyncio.to_thread(download_insta_post, url)
             await status_msg.delete()
-            if folder and os.path.exists(folder):
-                media = MediaGroupBuilder(caption=get_text("insta_stories", lang).format(username=username))
-                files = [f for f in os.listdir(folder) if not f.endswith(('.json', '.txt'))]
-                if not files:
-                    await message.answer(get_text("no_media", lang))
-                else:
-                    for f in files[:10]:
-                        path = os.path.join(folder, f)
-                        if f.lower().endswith(('.mp4', '.m4v', '.mov')): media.add_video(FSInputFile(path))
-                        else: media.add_photo(FSInputFile(path))
-                    await message.answer_media_group(media.build())
-                await cleanup(folder)
+
+        #case 3 reels
         else:
             path = await asyncio.to_thread(download_insta_reel, url)
             await status_msg.delete()
-            await safe_upload(message, path, lang)
+        if path:
+            try:
+                await status_msg.delete()
+                status_msg = None
+            except:
+                pass
+        await safe_upload(message, path, lang)
+
     except Exception as e:
-        await status_msg.delete()
+        if status_msg:
+            try:
+                await status_msg.delete()
+            except:
+                pass
         await message.answer(get_text("error_general", lang).format(e=e))
