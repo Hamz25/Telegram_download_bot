@@ -7,6 +7,6 @@ FFMPEG/
 downloads/
 __pycache__/
 *.session
-*.json
+*.jso
 
-WhatToDoNext.txt
+What_added.txt
