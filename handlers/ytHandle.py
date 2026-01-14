@@ -12,7 +12,7 @@ router = Router()
 
 @router.message(F.text.contains("youtube.com") | F.text.contains("youtu.be"))
 async def handle_youtube(message: types.Message, state: FSMContext):
-    from main import BotStates  # Local import to avoid circular dependency
+    from index import BotStates  # Local import to avoid circular dependency
     lang = message.from_user.language_code
     try:
         info, is_short, _, title, _, _ = await asyncio.to_thread(get_video_info, message.text)
@@ -35,7 +35,7 @@ async def handle_youtube(message: types.Message, state: FSMContext):
 
 @router.callback_query(F.data.startswith("q_"))
 async def process_yt_quality(callback: types.CallbackQuery, state: FSMContext):
-    from main import botname # Local import
+    from index import botname # Local import
     lang, choice = callback.from_user.language_code, callback.data.split("_")[1]
     data = await state.get_data()
     url = data.get("yt_url")

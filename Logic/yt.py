@@ -1,6 +1,7 @@
 import yt_dlp
 import os
-
+import uuid
+from Logic.path import generate_target_dir
 def get_video_info(url): #this function will extract the video information without downloading
     ydl_opts = {'noplaylist': True, 'quiet': True}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -19,8 +20,12 @@ def get_video_info(url): #this function will extract the video information witho
 
 def download_youtube(url, quality='720', is_audio=False):
     """Downloads YouTube media and returns the raw converted thumbnail."""
+    #create a file
+    target_dir = generate_target_dir("yt_")
+    os.makedirs(target_dir, exist_ok=True)
+
     ydl_opts = {
-        'outtmpl': 'downloads/%(title)s.%(ext)s',
+        'outtmpl': target_dir + '/%(title)s.%(ext)s', 
         'noplaylist': True,
         'writethumbnail': is_audio,
     }
@@ -61,7 +66,8 @@ def download_youtube(url, quality='720', is_audio=False):
                 "path": final_path,
                 "title": info.get('title', 'Unknown Title'),
                 "performer": info.get('uploader', 'Unknown Artist'),
-                "thumb": thumb_path 
+                "thumb": thumb_path,
+                "folder": target_dir
             }
         else:
             return {"path": filename}

@@ -3,13 +3,13 @@ import yt_dlp
 import uuid
 import requests
 from Token import Tiktok_cookies
+from Logic.path import generate_target_dir
 
 def download_tiktok(url, verbose=False): 
 
     try:
-        base_dir = os.path.abspath('downloads') #Root directory
-        request_id = str(uuid.uuid4())[:8] # create a uniqe folder so it wont be any problems with many users 
-        target_dir = os.path.join(base_dir, f'tk_{request_id}')
+
+        target_dir = generate_target_dir('tk')
         os.makedirs(target_dir, exist_ok=True)
 
         # Use TikWM API to detect content type and extract info (i used it just to download images from tiktok)

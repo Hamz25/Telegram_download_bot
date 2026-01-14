@@ -1,9 +1,10 @@
 import os
 import subprocess
 import glob
+from Logic.path import generate_target_dir
 
 def download_spotify_track(url):
-    download_path = 'downloads'
+    download_path = generate_target_dir('spotify')
     if not os.path.exists(download_path): 
         os.makedirs(download_path)
 

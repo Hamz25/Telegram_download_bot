@@ -5,7 +5,7 @@ from aiogram.enums import ChatAction
 
 from Logic.spotify import download_spotify_track
 from languages import get_text
-from Logic.Uploader import safe_upload 
+from Logic.Uploader import safe_upload
 
 router = Router()
 

@@ -90,37 +90,66 @@ async def handle_instagram(message: types.Message):
     if message.text.startswith("/"): return
 
     lang = message.from_user.language_code
-
     status_msg = await message.answer(get_text("uploading", lang))
-
     await message.bot.send_chat_action(message.chat.id, ChatAction.UPLOAD_VIDEO)
 
     url = message.text
-
     path = None
 
-    try: # case 1 stories 
-        if "/stories/" in url or not url.startswith("http"):
-            username = url.split("/stories/")[1].split("/")[0] if "http" in url else url.replace("@", "")
+    try:
+        # Case 1: Stories
+        if "/stories/" in url or (not url.startswith("http") and not "/highlights/" in url):
+            username = url.split("/stories/")[1].split("/")[0] if "/stories/" in url else url.replace("@", "")
             path = await asyncio.to_thread(download_insta_story, username)
-            caption = get_text("insta_stories", lang).format(username=username)
+            
+            if path:
+                await status_msg.delete()
+                caption = get_text("insta_stories", lang).format(username=username)
+                await safe_upload(message, path, lang, caption=caption)
+            else:
+                await status_msg.delete()
+                await message.answer(get_text("no_media", lang))
 
-        #case 2 posts
+        # Case 2: Highlights
+        elif "/highlights/" in url or url.lower().startswith("highlight"):
+            # Extract username from URL or command
+            if "/highlights/" in url:
+                username = url.split("instagram.com/")[1].split("/")[0]
+            else:
+                # Format: "highlight @username" or just "@username"
+                username = url.replace("highlight", "").replace("@", "").strip()
+            
+            path = await asyncio.to_thread(download_insta_highlight, username)
+            
+            if path:
+                await status_msg.delete()
+                caption = f"📌 Highlights from @{username}"
+                await safe_upload(message, path, lang, caption=caption)
+            else:
+                await status_msg.delete()
+                await message.answer(get_text("no_media", lang))
+
+        # Case 3: Posts
         elif "/p/" in url:
             path = await asyncio.to_thread(download_insta_post, url)
-            await status_msg.delete()
+            
+            if path:
+                await status_msg.delete()
+                await safe_upload(message, path, lang)
+            else:
+                await status_msg.delete()
+                await message.answer(get_text("no_media", lang))
 
-        #case 3 reels
+        # Case 4: Reels
         else:
             path = await asyncio.to_thread(download_insta_reel, url)
-            await status_msg.delete()
-        if path:
-            try:
+            
+            if path:
                 await status_msg.delete()
-                status_msg = None
-            except:
-                pass
-        await safe_upload(message, path, lang)
+                await safe_upload(message, path, lang)
+            else:
+                await status_msg.delete()
+                await message.answer(get_text("no_media", lang))
 
     except Exception as e:
         if status_msg:
@@ -129,3 +158,5 @@ async def handle_instagram(message: types.Message):
             except:
                 pass
         await message.answer(get_text("error_general", lang).format(e=e))
+        import traceback
+        traceback.print_exc()
