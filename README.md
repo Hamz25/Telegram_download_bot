@@ -29,29 +29,10 @@ if it won't work just simplly create a Vertual environment and you should be goo
 
 
 
-This is the code structure:
+This is where you should add ffmpeg:
 Telebot/
 ├──ffmpeg.exe              #You must download the ffmpeg to make the yt_dlp works
 ├──ffplay.exe
 ├──ffprobe.exe
-├── main.py                # Entry point & router registration
-├── Token.py               # Credentials (Tokens and Cookie paths)
-├── languages.py           # Centralized translations 
-│
-├── Logic/                 # "Logic Folder" - Business logic & utilities
-│   ├── __init__.py        # Empty file to make folder a package
-│   ├── snapchat.py        # Snapchat download logic
-│   ├── tiktok.py          # TikTok download logic
-│   ├── insta.py           # Instagram Reel/Story logic
-│   ├── yt.py              # YouTube/Shorts logic
-│   ├── spotify.py         # Spotify/spotDL logic
-│   ├── cleanUp.py         # File deletion helper
-│   └── Uploader.py        # Safe upload helper
-│
-└── handlers/              # "Handlers Folder" - Telegram event routers
-    ├── __init__.py        # Empty file
-    ├── ytHandle.py        # YouTube message/callback handlers
-    ├── SpotifyHandle.py   # Spotify message handlers
-    └── socialHandle.py    # TikTok, Insta, Snap handlers
 
 You should make the same code structre especially for ffmpeg to work 
