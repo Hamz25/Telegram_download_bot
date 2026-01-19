@@ -29,10 +29,18 @@ if it won't work just simplly create a Vertual environment and you should be goo
 
 
 
+<<<<<<< HEAD
 This is where you should add ffmpeg:
+=======
+This is where you should add ffmpeg files:
+>>>>>>> 786aeceed3563cef4ff2a7ba5a8ad62c6a315a9f
 Telebot/
 ├──ffmpeg.exe              #You must download the ffmpeg to make the yt_dlp works
 ├──ffplay.exe
 ├──ffprobe.exe
+<<<<<<< HEAD
+=======
+├── main.py
+>>>>>>> 786aeceed3563cef4ff2a7ba5a8ad62c6a315a9f
 
 You should make the same code structre especially for ffmpeg to work 
