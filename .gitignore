@@ -9,4 +9,11 @@ __pycache__/
 *.session
 *.jso
 
+Logic/utils/admin.py
+Logic/utils/user_tracker.py
+Logic/utils/report_tracker.py
+
+handlers/admin_handler.py
+handlers/Commands_handler.py/
+
 What_added.txt
