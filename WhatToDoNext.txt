@@ -1,0 +1,11 @@
+1-fix insta story download and make it download highlight ✖️
+2-get the thumbnail for every app ✖️
+3-convert to voice message ✔️
+4-better UI ✖️
+5- make a better code structure ✔️
+6- make it download posts (more than one picture post) ✔️
+7- make a method to get the users ID's and username and save it into a csv file to send important messages to users ✔️
+8- make the /report work by sending messages from users to me ✔️
+9- make the code more orginized ✔️
+10- fix the spotify error
+11- fix snapchat error

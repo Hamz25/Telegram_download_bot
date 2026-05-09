@@ -157,6 +157,9 @@ def _download_video(url: str, target_dir: str, verbose: bool = False) -> Optiona
         "writethumbnail": True,
         "noplaylist": False,
         "extract_flat": False,
+
+        "force_ipv4": True,
+        "socket_timeout": 15,
     }
 
     try:
@@ -275,17 +278,11 @@ def download_tiktok(
             _log("[TikTok] Content type: Video", verbose)
             return _download_video(url, target_dir, verbose)
 
-    except requests.exceptions.Timeout:
-        _log("[TikTok] ❌ API request timeout", verbose)
-        return None
-
-    except requests.exceptions.RequestException as e:
-        _log(f"[TikTok] ❌ Network error: {e}", verbose)
-        return None
-
+    except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
+            # 1. Log the API failure as a warning, not a fatal error
+            _log(f"[TikTok] ⚠️ API unreachable ({e}). Falling back to yt-dlp...", verbose)
     except Exception as e:
-        _log(f"[TikTok] ❌ Unexpected error: {e}", verbose)
-        import traceback
-
-        traceback.print_exc()
-        return None
+            _log(f"[TikTok] ❌ Unexpected error: {e}", verbose)
+            import traceback
+            traceback.print_exc()
+            return None

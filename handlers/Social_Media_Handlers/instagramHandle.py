@@ -42,7 +42,7 @@ async def handle_instagram_url(message: types.Message):
             # Story
             username = url.split("/stories/")[1].split("/")[0]
             print(f"[Instagram] Downloading stories for @{username}")
-            path = await asyncio.to_thread(download_insta_story, username)
+            path = await download_insta_story(username)
 
             await _delete_message_safely(status_msg)
             
@@ -55,19 +55,19 @@ async def handle_instagram_url(message: types.Message):
         elif "/reel/" in url or "/reels/" in url:
             # Reel
             print(f"[Instagram] Downloading reel")
-            path = await asyncio.to_thread(download_insta_reel, url)
+            path = await download_insta_reel(url)
 
             await _delete_message_safely(status_msg)
             
             if path:
-                await safe_upload(message, path, lang, caption=get_text("insta_reel_success", lang))
+                await safe_upload(message, path, lang, caption=get_text("spoon", lang))
             else:
                 await message.answer(get_text("no_media", lang))
 
         elif "/p/" in url or "/tv/" in url:
             # Post
             print(f"[Instagram] Downloading post")
-            path = await asyncio.to_thread(download_insta_post, url)
+            path = await download_insta_post(url)
 
             await _delete_message_safely(status_msg)
             
@@ -107,7 +107,7 @@ async def handle_instagram_username(message: types.Message, state: FSMContext):
     try:
         print(f"[Instagram] Searching profile: {username}")
         
-        profile_data = await asyncio.to_thread(search_instagram_profile, username)
+        profile_data = await search_instagram_profile(username)
         
         await _delete_message_safely(status_msg)
         
@@ -159,7 +159,7 @@ async def handle_profile_details(callback: types.CallbackQuery, state: FSMContex
     await _delete_message_safely(callback.message)
     
     try:
-        profile_data = await asyncio.to_thread(search_instagram_profile, username)
+        profile_data = await search_instagram_profile(username)
         
         if not profile_data:
             await callback.message.answer(get_text("profile_not_found", lang).format(username=username))
@@ -214,7 +214,7 @@ async def handle_highlights_request(callback: types.CallbackQuery, state: FSMCon
     try:
         print(f"[Instagram] Fetching highlights for @{username}")
         
-        highlights = await asyncio.to_thread(get_profile_highlights, username)
+        highlights = await get_profile_highlights(username)
         
         await _delete_message_safely(status_msg)
         
@@ -233,8 +233,9 @@ async def handle_highlights_request(callback: types.CallbackQuery, state: FSMCon
             await callback.message.answer(get_text("downloading_highlight", lang))
             await callback.bot.send_chat_action(callback.message.chat.id, ChatAction.UPLOAD_VIDEO)
             
-            path = await asyncio.to_thread(download_insta_highlight, username, 0)
-            
+            # Pass the unique_id (int) directly
+            path = await download_insta_highlight(username, highlights[0]["index"])
+
             if path:
                 await safe_upload(
                     callback.message,
@@ -253,6 +254,7 @@ async def handle_highlights_request(callback: types.CallbackQuery, state: FSMCon
             builder = InlineKeyboardBuilder()
             for hl in highlights:
                 button_text = f"{hl['title']} ({hl['item_count']} items)"
+                # Store the unique_id in callback data
                 builder.button(text=button_text[:64], callback_data=f"dl_hl_{hl['index']}")
             
             builder.button(text=get_text("btn_download_all_highlights", lang), callback_data="dl_hl_all")
@@ -300,9 +302,9 @@ async def handle_highlight_download(callback: types.CallbackQuery, state: FSMCon
         await callback.bot.send_chat_action(callback.message.chat.id, ChatAction.UPLOAD_VIDEO)
         
         if selection == "all":
-            # Download all highlights
+            # Download all highlights - pass None to download all
             print(f"[Instagram] Downloading all highlights for @{username}")
-            path = await asyncio.to_thread(download_insta_highlight, username, None)
+            path = await download_insta_highlight(username, None)
             
             await _delete_message_safely(status_msg)
             
@@ -316,12 +318,12 @@ async def handle_highlight_download(callback: types.CallbackQuery, state: FSMCon
             else:
                 await callback.message.answer(get_text("no_media", lang))
         else:
-            # Download specific highlight
-            highlight_idx = int(selection)
-            highlight_info = next((hl for hl in highlights_list if hl["index"] == highlight_idx), None)
+            # Download specific highlight - convert selection to int
+            highlight_id = int(selection)
+            highlight_info = next((hl for hl in highlights_list if hl["index"] == highlight_id), None)
             
-            print(f"[Instagram] Downloading highlight #{highlight_idx} for @{username}")
-            path = await asyncio.to_thread(download_insta_highlight, username, highlight_idx)
+            print(f"[Instagram] Downloading highlight #{highlight_id} for @{username}")
+            path = await download_insta_highlight(username, highlight_id)
             
             await _delete_message_safely(status_msg)
             
@@ -365,7 +367,7 @@ async def handle_stories_download(callback: types.CallbackQuery, state: FSMConte
     try:
         print(f"[Instagram] Downloading stories for @{username}")
         
-        path = await asyncio.to_thread(download_insta_story, username)
+        path = await download_insta_story(username)
         
         await _delete_message_safely(status_msg)
         
@@ -377,7 +379,7 @@ async def handle_stories_download(callback: types.CallbackQuery, state: FSMConte
                 caption=get_text("insta_stories", lang).format(username=username),
             )
         else:
-            await callback.message.answer(get_text("upload_failed", lang).format(username=username))
+            await callback.message.answer(get_text("no_stories", lang).format(username=username))
         
         await state.clear()
         

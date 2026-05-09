@@ -8,7 +8,7 @@ import asyncio
 from aiogram import Router, F, types
 from aiogram.enums import ChatAction
 
-from Logic.Social_Media_Download.snapchat import download_snapchat_video
+from Logic.Social_Media_Download.snapchat import Download_snap_short
 from Logic.utils.helpers import _delete_message_safely, _handle_download_error
 
 from languages import get_text
@@ -28,12 +28,12 @@ async def handle_snapchat(message: types.Message):
         url = message.text.strip()
         print(f"[Snapchat] Processing URL: {url}")
 
-        path = await asyncio.to_thread(download_snapchat_video, url)
+        path = await asyncio.to_thread(Download_snap_short, url)
 
         await _delete_message_safely(status_msg)
 
         if path and os.path.exists(path):
-            await safe_upload(message, path, lang, caption=get_text("snap_success", lang))
+            await safe_upload(message, path, lang, caption=get_text("", lang))
         else:
             await message.answer(get_text("no_media", lang))
 

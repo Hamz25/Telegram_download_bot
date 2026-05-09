@@ -1,6 +1,7 @@
-TToken = "Add Your Bot token From @BotFather"
+TToken = "8005133585:AAG9Xpqy8nm4KJwGaz3MJEdXJmQglN9IQuc"
 
-Tiktok_cookies = 'cookies/Your TikTok Cookies here'
-Insta_cookies = 'cookies/Your Instagram Cookies here'
-Insta_username = 'your account username' #Note Do not use your actual account
-Insta_password = 'your account password' 
+Youtube_cookes= 'cookies/youtube_cookies.txt'
+Tiktok_cookies = 'cookies/Tiktok_cookies.txt'
+Insta_cookies = "/home/noops/.config/instaloader/session-electro.hstore"
+Insta_username = 'electro.hstore'
+Insta_password = 'H19ZWw102_2005&'

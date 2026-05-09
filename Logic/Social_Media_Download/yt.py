@@ -229,6 +229,12 @@ def download_youtube(url: str, quality: str = "720", is_audio: bool = False) -> 
             "outtmpl": os.path.join(target_dir, "%(title)s.%(ext)s"),
             "noplaylist": True,
             "writethumbnail": True,
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            "extractor_args":{
+                "youtube":{
+                    "player_client":['android']
+                }
+            }
         }
 
         if is_audio:

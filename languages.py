@@ -93,6 +93,7 @@ TEXTS = {
         "yes": "Yes",
         "no": "No",
         "TestError": "Test",
+        "spoon": "@spoonDbot",
     },
     
     "ar": {
@@ -182,6 +183,7 @@ TEXTS = {
         # Yes/No
         "yes": "نعم",
         "no": "لا",
+        "spoon": "@spoonDbot",
     }
 }
 
