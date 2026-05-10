@@ -1,6 +1,6 @@
 services:
   telegram_download_bot:
-    image : telegram_download_bot:latest
+    image : spoon20/telegram_download_bot:latest
     container_name: telegram_download_bot
     restart: unless-stopped
     command: python -m venv .venv && . venv/bin/activate && pip install -r requirements.txt && python main.py
