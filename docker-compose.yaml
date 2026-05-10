@@ -3,6 +3,7 @@ services:
     image : telegram_download_bot:latest
     container_name: telegram_download_bot
     restart: unless-stopped
+    command: python -m venv .venv && . venv/bin/activate && pip install -r requirements.txt && python main.py
     env_file:
       - .env
     volumes:
