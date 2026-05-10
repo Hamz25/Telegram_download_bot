@@ -5,5 +5,3 @@ services:
     restart: unless-stopped
     volumes:
       - ./data:/app/data
-    
-    command: ["mkdir", "-p", "data"]
