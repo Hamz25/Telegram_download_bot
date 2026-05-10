@@ -9,6 +9,8 @@ REPORTS_PENDING_JSON = 'data/reports_pending.json'
 
 def get_or_create_reports_csv():
     """Ensure reports CSV file exists with headers."""
+    if not os.path.exists('data'):
+        os.makedirs('data')
     if not os.path.exists(REPORTS_CSV):
         with open(REPORTS_CSV, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
