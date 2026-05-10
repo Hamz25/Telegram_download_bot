@@ -1,11 +1,9 @@
 services:
   telegram_download_bot:
-    image : spoon20/telegram_download_bot:v1.0
+    image: spoon20/telegram_download_bot:v1.0
     container_name: telegram_download_bot
     restart: unless-stopped
-    command: python -m venv .venv && . venv/bin/activate && pip install -r requirements.txt && python main.py
     env_file:
       - .env
     volumes:
       - ./data:/app/data
-    
