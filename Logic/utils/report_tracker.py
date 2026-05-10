@@ -4,8 +4,8 @@ import json
 from datetime import datetime
 from typing import List, Dict, Optional
 
-REPORTS_CSV = 'reports.csv'
-REPORTS_PENDING_JSON = 'reports_pending.json'
+REPORTS_CSV = 'data/reports.csv'
+REPORTS_PENDING_JSON = 'data/reports_pending.json'
 
 def get_or_create_reports_csv():
     """Ensure reports CSV file exists with headers."""

@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Optional
 
-USERS_CSV = 'users.csv'
+USERS_CSV = 'data/users.csv'
 
 def get_or_create_csv():
     """Ensure CSV file exists with headers."""

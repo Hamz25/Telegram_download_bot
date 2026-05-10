@@ -20,3 +20,17 @@ handlers/admin_handler.py
 handlers/Commands_handler.py/
 handlers/Commands_handler/
 What_added.txt
+
+# Git and github files
+.git/
+.gitignore
+.github/
+.workflow/
+
+
+#docker files
+docker-compose.yaml
+docker-compose.yml
+Dockerfile
+.dockerignore
+
