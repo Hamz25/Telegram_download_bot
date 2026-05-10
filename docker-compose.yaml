@@ -29,7 +29,6 @@ services:
     # ── Volumes ──────────────────────────────────────────────────────────────
     volumes:
       - ./data:/app/data          # Persistent user data / database
-      - ./downloads:/app/downloads  # Downloaded media (mounted so files survive restarts)
 
     # ── Resource limits ──────────────────────────────────────────────────────
     # Prevents the bot from eating all RAM/CPU on shared hosts or small VPSes.
