@@ -184,7 +184,7 @@ async def report_stats_cmd(message: types.Message):
         await message.answer("❌ You are not authorized to use this command.")
         return
     
-    from Logic.report_tracker import get_pending_count, get_report_count
+    from Logic.utils.report_tracker import get_pending_count, get_report_count
     
     pending = get_pending_count()
     total = get_report_count()
