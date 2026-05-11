@@ -7,14 +7,11 @@ import asyncio
 import os
 from Logic.Logger import logger
 
-from aiogram import Bot, Dispatcher, types  
+from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.filters import CommandStart
-
 # Custom modules
-from cookies.Token import TToken
 
 from languages import get_text  
 
@@ -93,7 +90,7 @@ async def main():
     try:
         # Initialize bot with HTML parse mode
         bot = Bot(
-            token=TToken, 
+            token=os.getenv("TToken"),
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         

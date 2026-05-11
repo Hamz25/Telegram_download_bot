@@ -3,6 +3,7 @@
 FFMPEG/
 
 # Environment and Temporary Files
+.env
 .venv/
 downloads/
 __pycache__/

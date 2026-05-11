@@ -1,4 +1,5 @@
 from aiogram import types
+from languages import get_text
 
 async def _delete_message_safely(message: types.Message):
     """
