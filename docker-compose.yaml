@@ -20,7 +20,7 @@ services:
     # Keep secrets out of the image; use a .env file or set them at runtime.
     # Copy .env.example → .env and fill in your values.
     env_file:
-      - .venv                  # BOT_TOKEN=xxx  (used by Token.py if you refactor)
+      - .env                  # BOT_TOKEN=xxx  (used by Token.py if you refactor)
 
     environment:
       - PYTHONUNBUFFERED=1    # Makes logs appear immediately (no buffering)

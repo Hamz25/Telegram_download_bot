@@ -35,7 +35,7 @@ WORKDIR /app
 COPY --chown=botuser:botuser . .
 
 # Create downloads dir with correct ownership
-RUN mkdir -p downloads && chown botuser:botuser downloads && mkdir data && chown botuser:botuser data && mkdir .venv && chown botuser:botuser .venv
+RUN mkdir -p downloads && chown botuser:botuser downloads && mkdir data && chown botuser:botuser data 
 
 USER botuser
 
