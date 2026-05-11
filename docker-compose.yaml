@@ -1,16 +1,5 @@
 services:
   telegram_download_bot:
-    # Build locally from source — or swap `build` for `image` if pushing to a registry
-    build:
-      context: .
-      dockerfile: Dockerfile
-      # Build for multiple CPU architectures so the same compose file works on
-      # x86-64 laptops/servers, ARM64 Raspberry Pi, and Apple Silicon Macs.
-      # Remove the `platforms` key if you only need one arch (speeds up build).
-      platforms:
-        - linux/amd64
-        - linux/arm64
-
     image: spoon20/telegram_download_bot:v2.1  # Optional: tag the built image for reuse without rebuilding
     container_name: telegram_download_bot
 

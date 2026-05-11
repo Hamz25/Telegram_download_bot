@@ -11,14 +11,8 @@ __pycache__/
 *csv
 data/
 cookies/
+.env
 
-Logic/utils/admin.py
-Logic/utils/user_tracker.py
-Logic/utils/report_tracker.py
-
-handlers/admin_handler.py
-handlers/Commands_handler.py/
-handlers/Commands_handler/
 What_added.txt
 
 # Git and github files
