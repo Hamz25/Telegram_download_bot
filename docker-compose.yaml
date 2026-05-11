@@ -29,6 +29,8 @@ services:
     # ── Volumes ──────────────────────────────────────────────────────────────
     volumes:
       - ./data:/app/data          # Persistent user data / database
+      - ./Logic:/app/Logic
+      - ./handlers:/app/handlers
 
     # ── Resource limits ──────────────────────────────────────────────────────
     # Prevents the bot from eating all RAM/CPU on shared hosts or small VPSes.
