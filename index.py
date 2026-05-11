@@ -14,7 +14,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.filters import CommandStart
 
 # Custom modules
-from Token import TToken
+from cookies.Token import TToken
 
 from languages import get_text  
 

@@ -5,19 +5,10 @@
 # ─────────────────────────────────────────────
 FROM python:3.11-slim AS builder
 
-# Build-time deps (gcc needed by some wheels)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        gcc \
-        libffi-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /build
-
 COPY requirements.txt .
 
 # Install into a dedicated prefix so we can copy just the packages
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-
 
 # ─────────────────────────────────────────────
 # Stage 2 — Runtime (final image)
@@ -44,7 +35,7 @@ WORKDIR /app
 COPY --chown=botuser:botuser . .
 
 # Create downloads dir with correct ownership
-RUN mkdir -p downloads && chown botuser:botuser downloads
+RUN mkdir -p downloads && chown botuser:botuser downloads && mkdir data && chown botuser:botuser data && mkdir .venv && chown botuser:botuser .venv
 
 USER botuser
 

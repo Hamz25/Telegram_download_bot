@@ -11,7 +11,7 @@ services:
         - linux/amd64
         - linux/arm64
 
-    image: spoon20/telegram_download_bot:v2.0
+    image: spoon20/telegram_download_bot:v2.1  # Optional: tag the built image for reuse without rebuilding
     container_name: telegram_download_bot
 
     restart: unless-stopped
@@ -20,7 +20,7 @@ services:
     # Keep secrets out of the image; use a .env file or set them at runtime.
     # Copy .env.example → .env and fill in your values.
     env_file:
-      - .env                  # BOT_TOKEN=xxx  (used by Token.py if you refactor)
+      - .venv                  # BOT_TOKEN=xxx  (used by Token.py if you refactor)
 
     environment:
       - PYTHONUNBUFFERED=1    # Makes logs appear immediately (no buffering)
