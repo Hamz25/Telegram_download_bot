@@ -14,3 +14,7 @@ class AdminStates(StatesGroup):
     waiting_for_set_admin = State()
     waiting_for_remove_admin = State()
     waiting_for_resolve_report = State()
+
+class InstagramStates(StatesGroup):
+    waiting_for_action = State()
+    waiting_for_highlight_choice = State()
