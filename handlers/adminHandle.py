@@ -8,8 +8,10 @@ import asyncio
 from aiogram import Router, F, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+
+from states.bot_states import AdminStates
 
 from Logic.admin import (
     is_admin,
@@ -27,19 +29,6 @@ from Logic.utils.report_tracker import (
 
 # Router initialization
 router = Router()
-
-# ============================================================================
-# FSM States
-# ============================================================================
-
-
-class AdminStates(StatesGroup):
-    """Finite State Machine states for admin operations."""
-
-    waiting_for_broadcast = State()
-    waiting_for_set_admin = State()
-    waiting_for_remove_admin = State()
-    waiting_for_resolve_report = State()
 
 # ============================================================================
 # Helper Functions

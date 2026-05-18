@@ -69,7 +69,7 @@ async def handle_youtube(message: types.Message, state: FSMContext):
     
     Supported qualities: 360p, 720p, 1080p, MP3 (audio)
     """
-    from index import BotStates  # Local import to avoid circular dependency
+    from states.bot_states import BotStates
 
     lang = message.from_user.language_code or "en"
 
@@ -134,7 +134,7 @@ async def _handle_youtube_short(
         title: Video title
         lang: User language code
     """
-    from index import BotStates
+    from states.bot_states import BotStates
 
     status = await message.answer(get_text("shorts_detected", lang))
     await message.bot.send_chat_action(message.chat.id, ChatAction.UPLOAD_VIDEO)
@@ -255,7 +255,7 @@ async def _handle_video_quality_selection(
         thumbnail: Thumbnail URL
         lang: User language code
     """
-    from index import BotStates
+    from states.bot_states import BotStates
 
     await state.update_data(yt_url=url, yt_title=title)
 

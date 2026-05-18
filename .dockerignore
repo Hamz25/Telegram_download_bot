@@ -12,6 +12,7 @@ __pycache__/
 data/
 cookies/
 .env
+testing/
 
 What_added.txt
 
