@@ -10,7 +10,6 @@ from Logic.Logger import logger
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
-from states.bot_states import BotStates
 # Custom modules
 
 

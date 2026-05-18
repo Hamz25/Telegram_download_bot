@@ -7,20 +7,20 @@ Provides multilingual text support for the bot interface.
 TEXTS = {
     "en": {
         # General
-        "welcome": "👋 Welcome to Social Media Downloader Bot!\n\n"
-                   "📱 **Supported Platforms:**\n"
-                   "• YouTube (Videos, Shorts, Audio)\n"
-                   "• TikTok (Videos, Photos, Audio)\n"
-                   "• Instagram (Stories, Reels, Posts, Highlights)\n"
-                   "• Snapchat\n"
-                   "• Spotify (Audio)\n\n"
-                   "📝 **How to use:**\n"
-                   "Just send me a link from any supported platform!\n\n"
-                   "🔧 **Commands:**\n"
-                   "/start - start the bot\n"
-                   "/report - Report a problem\n",
+        "welcome": "👋 Welcome to <bold>Spoon Download bot</bold>\n\n"
+                   "  **Supported Platforms:**\n"
+                    "• YouTube (Videos, Shorts, Audio)\n"
+                    "• TikTok (Videos, Photos, Audio)\n"
+                    "• Instagram (Reels, Posts)\n"
+                    "• Snapchat\n"
+                    "• Spotify (Audio)\n\n"
+                    "  **How to use:**\n"
+                    "Just send me a <bold>link</bold> from any supported platform\n\n"
+                    "  **Commands:**\n"
+                    "/start - start the bot\n"
+                    "/report - Report a problem\n",
         
-        "uploading": "⏳ Downloading and uploading... Please wait.",
+        "uploading": "<bold>Downloading and uploading... Please wait.</bold>",
         "fetching": "🔍 Fetching information...",
         "no_media": "❌ No media found or download failed.",
         "upload_failed": "❌ Upload failed. Please try again.",
@@ -45,27 +45,27 @@ TEXTS = {
         "tiktok_voice": "🎤 TikTok Voice Message",
         
         # Instagram specific
-        "insta_stories": "📸 Stories from @{username}",
-        "profile_found": "📱 **Instagram Profile Found**\n\n"
-                         "👤 **Username:** @{username}\n"
-                         "👋 **Name:** {full_name}\n"
-                         "👥 **Followers:** {followers}\n"
-                         "🤝 **Following:** {following}\n"
-                         "📸 **Posts:** {posts}\n"
-                         "✅ **Verified:** {verified}\n"
-                         "🔐 **Private:** {private}",
+        "insta_stories": " Stories from @{username}",
+        "profile_found": " **Instagram Profile Found**\n\n"
+                         " **Username:** @{username}\n"
+                         " **Name:** {full_name}\n"
+                         " **Followers:** {followers}\n"
+                         " **Following:** {following}\n"
+                         " **Posts:** {posts}\n"
+                         " **Verified:** {verified}\n"
+                         " **Private:** {private}",
         
-        "profile_details": "📱 **Profile Details**\n\n"
-                           "👤 **Username:** @{username}\n"
-                           "👋 **Name:** {full_name}\n"
-                           "📝 **Bio:** {bio}\n\n"
-                           "📊 **Statistics:**\n"
-                           "👥 **Followers:** {followers}\n"
-                           "🤝 **Following:** {following}\n"
-                           "📸 **Posts:** {posts}\n\n"
-                           "⚙️ **Settings:**\n"
-                           "✅ **Verified:** {verified}\n"
-                           "🔐 **Private:** {private}",
+        "profile_details": " **Profile Details**\n\n"
+                           " **Username:** @{username}\n"
+                           " **Name:** {full_name}\n"
+                           " **Bio:** {bio}\n\n"
+                           " **Statistics:**\n"
+                           " **Followers:** {followers}\n"
+                           " **Following:** {following}\n"
+                           " **Posts:** {posts}\n\n"
+                           " **Settings:**\n"
+                           " **Verified:** {verified}\n"
+                           " **Private:** {private}",
         
         "profile_not_found": "❌ Profile @{username} not found.",
         "no_bio": "No bio available",
@@ -98,16 +98,16 @@ TEXTS = {
     
     "ar": {
         # General
-        "welcome": "👋 مرحبًا بكم في بوت تحميل منصات التواصل الاجتماعي!\n\n"
-                   "📱 **المنصات المدعومة:**\n"
-                   "• يوتيوب (فيديوهات، قصير، صوت)\n"
+        "welcome": "<bold>اهلا بكم ببوت سبون</bold>\n\n"
+                   " **المنصات المدعومة:**\n"
+                   "• يوتيوب (فيديوهات، يوتيوب شورت، صوت)\n"
                    "• تيك توك (فيديوهات، صور، صوت)\n"
-                   "• إنستجرام (ستوريز، ريلز، منشورات، هايلايتس)\n"
+                   "• إنستجرام (ريلز، منشورات)\n"
                    "• سناب شات\n"
                    "• سبوتيفاي (صوت)\n\n"
-                   "📝 **طريقة الاستخدام:**\n"
+                   " **طريقة الاستخدام:**\n"
                    "فقط أرسل لي رابط من أي منصة مدعومة!\n\n"
-                   "🔧 **الأوامر:**\n"
+                   " **الأوامر:**\n"
                    "/start - لبدء البوت\n"
                    "/report - الإبلاغ عن مشكلة\n",
         
