@@ -1,12 +1,13 @@
-import os
-import asyncio
+
 from aiogram import Router, F, types
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.filters import StateFilter
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from Logic.utils.helpers import _delete_message_safely, _handle_download_error
+
+from states.bot_states import BotStates, InstagramStates
 
 from Logic.Social_Media_Download.insta import (
     download_insta_reel,
@@ -22,9 +23,6 @@ from Logic.utils.Uploader import safe_upload
 
 router = Router()
 
-class InstagramStates(StatesGroup):
-    waiting_for_action = State()
-    waiting_for_highlight_choice = State()
 
 
 
@@ -88,7 +86,7 @@ async def handle_instagram_url(message: types.Message):
 # Instagram Username Handler (Profile Menu)
 # ============================================================================
 
-@router.message(F.text.regexp(r"^@?[\w\.]+$"))
+@router.message(StateFilter(BotStates.searching_state))
 async def handle_instagram_username(message: types.Message, state: FSMContext):
     """Handle Instagram username input - show profile menu."""
     # Ignore commands

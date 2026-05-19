@@ -13,12 +13,13 @@ import os
 import yt_dlp
 import requests
 
-from Token import Tiktok_cookies
 from Logic.utils.path import generate_target_dir
 
 # ============================================================================
 # Constants
 # ============================================================================
+
+Tiktok_cookies = os.getenv("Tiktok_cookies")
 
 # TikWM API endpoint for metadata and carousel downloads
 TIKWM_API_URL = "https://www.tikwm.com/api/"

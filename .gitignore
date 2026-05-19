@@ -3,6 +3,7 @@
 FFMPEG/
 
 # Environment and Temporary Files
+.env
 .venv/
 downloads/
 __pycache__/
@@ -11,12 +12,14 @@ __pycache__/
 *csv
 data/
 cookies/
+testing/
 
-Logic/utils/admin.py
+
+Logic/admin.py
 Logic/utils/user_tracker.py
 Logic/utils/report_tracker.py
 
-handlers/admin_handler.py
-handlers/Commands_handler.py/
-handlers/Commands_handler/
+handlers/adminHandler.py
+handlers/Commands_Handlers/Report_cmd.py
+handlers/Commands_Handlers/User_cmd.py
 What_added.txt

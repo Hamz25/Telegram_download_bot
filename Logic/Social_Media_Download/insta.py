@@ -1,9 +1,7 @@
 import os
-import subprocess
 import asyncio
 import instaloader
 from typing import Optional, Dict, List
-from Token import Insta_cookies 
 from Logic.utils.path import generate_target_dir
 
 # Initialize Instaloader API
@@ -11,6 +9,7 @@ L = instaloader.Instaloader(max_connection_attempts=1)
 
 # Set a mobile User Agent to help bypass network restrictions
 L.context.user_agent = "Instagram 150.0.0.33.120 Android (24/7.0; 480dpi; 1080x1920; Samsung; SM-G930F; herolte; samsungexynos8890; en_US)"
+Insta_cookies = os.getenv("Insta_cookies")
 
 if Insta_cookies and os.path.exists(Insta_cookies):
     # Use the session file you generated
