@@ -8,8 +8,8 @@ import asyncio
 from aiogram import Router, F, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from keyboards.admin_buttons import _build_cancel_button, admin_menu_builder
 
 from states.bot_states import AdminStates
 
@@ -35,12 +35,6 @@ router = Router()
 # ============================================================================
 
 
-def _build_cancel_button() -> InlineKeyboardBuilder:
-    """Build a keyboard with cancel button."""
-    builder = InlineKeyboardBuilder()
-    builder.button(text="❌ Cancel", callback_data="cancel_operation")
-    return builder
-
 
 async def _check_admin_authorization(
     user_id: int, query: types.CallbackQuery = None, message: types.Message = None
@@ -62,39 +56,11 @@ async def _check_admin_authorization(
 
 @router.message(Command("admin_menu"))
 async def admin_menu(message: types.Message):
-    """
-    Display admin control panel with action buttons.
-    
-    Shows a menu with buttons for:
-    - Broadcasting messages to all users
-    - Managing admin privileges
-    - Viewing statistics
-    - Handling user reports
-    - Accessing help
-    """
-    if not await _check_admin_authorization(message.from_user.id, message=message):
+
+    if not await _check_admin_authorization(message.from_user.id, message=message): #check if user is admin, if not send error message and
         return
 
-    builder = InlineKeyboardBuilder()
-
-    # Add buttons in pairs (2 per row)
-    builder.button(text="📡 Broadcast Message", callback_data="admin_broadcast")
-    builder.button(text="👥 Set Admin", callback_data="admin_set_admin")
-
-    builder.button(text="❌ Remove Admin", callback_data="admin_remove_admin")
-    builder.button(text="📊 View Stats", callback_data="admin_stats")
-
-    builder.button(text="🚨 Pending Reports", callback_data="admin_reports")
-    builder.button(text="📋 Report Stats", callback_data="admin_report_stats")
-
-    builder.button(text="❓ Help", callback_data="admin_help_menu")
-
-    builder.adjust(2)
-
-    await message.answer(
-        "👨‍💼 **Admin Control Panel**\n\nSelect an action:", 
-        reply_markup=builder.as_markup()
-    )
+    await admin_menu_builder(message) #this will send the admin menu with buttons
 
 
 # ============================================================================

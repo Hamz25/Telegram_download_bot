@@ -9,11 +9,16 @@ import os
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.enums import ChatAction
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+
+from keyboards.yt_buttons import yt_options_keyboard, yt_quality_keyboard
+
 
 from Logic.Social_Media_Download.yt import get_video_info, download_youtube
-from languages import get_text
 from Logic.utils.Uploader import safe_upload
+
+from languages import get_text
+
 
 
 # Router initialization
@@ -159,20 +164,7 @@ async def _handle_youtube_short(
                     break
             
             # Build download options keyboard
-            builder = InlineKeyboardBuilder()
-            builder.button(
-                text=get_text("btn_video", lang), 
-                callback_data=f"short_video_{message.message_id}"
-            )
-            builder.button(
-                text=get_text("btn_audio", lang), 
-                callback_data=f"short_audio_{message.message_id}"
-            )
-            builder.button(
-                text=get_text("btn_voice", lang), 
-                callback_data=f"short_voice_{message.message_id}"
-            )
-            builder.adjust(3)
+            builder = await yt_options_keyboard(lang, message)
             
             # Store download data using bot object
             storage_key = f"short_{message.message_id}"
@@ -260,17 +252,7 @@ async def _handle_video_quality_selection(
     await state.update_data(yt_url=url, yt_title=title)
 
     # Build quality selection keyboard
-    builder = InlineKeyboardBuilder()
-
-    # Add quality options
-    for quality in ["360", "720", "1080"]:
-        builder.button(text=f"🎬 {quality}p", callback_data=f"q_{quality}")
-
-    # Add audio option
-    builder.button(text="🎵 MP3", callback_data="q_audio")
-
-    builder.adjust(2)  # 2 buttons per row
-
+    builder = await yt_quality_keyboard(lang, message)
     # Format video info message
     duration_str = _format_video_duration(duration)
     size_str = _format_file_size(size)
