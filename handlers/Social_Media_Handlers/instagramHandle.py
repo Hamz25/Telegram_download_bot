@@ -26,7 +26,7 @@ router = Router()
 
 
 
-@router.message(F.text.contains("instagram.com"))
+@router.message(F.text.contains("instagram.com"), StateFilter(BotStates.idle_state))
 async def handle_instagram_url(message: types.Message):
     """Handle Instagram direct URL downloads (stories, reels, posts)."""
     lang = message.from_user.language_code or "en"
@@ -145,7 +145,7 @@ async def handle_instagram_username(message: types.Message, state: FSMContext):
 # Instagram Profile Details Callback
 # ============================================================================
 
-@router.callback_query(F.data.startswith("ig_details_"))
+@router.callback_query(F.data.startswith("ig_details_"), StateFilter(InstagramStates.waiting_for_action))
 async def handle_profile_details(callback: types.CallbackQuery, state: FSMContext):
     """Display detailed profile information."""
     lang = callback.from_user.language_code or "en"
@@ -196,7 +196,7 @@ async def handle_profile_details(callback: types.CallbackQuery, state: FSMContex
 # Instagram Highlights Request Callback
 # ============================================================================
 
-@router.callback_query(F.data.startswith("ig_highlights_"))
+@router.callback_query(F.data.startswith("ig_highlights_"), StateFilter(InstagramStates.waiting_for_action))
 async def handle_highlights_request(callback: types.CallbackQuery, state: FSMContext):
     """Handle highlight download request."""
     lang = callback.from_user.language_code or "en"
@@ -274,7 +274,7 @@ async def handle_highlights_request(callback: types.CallbackQuery, state: FSMCon
 # Instagram Highlight Download Callback
 # ============================================================================
 
-@router.callback_query(F.data.startswith("dl_hl_"))
+@router.callback_query(F.data.startswith("dl_hl_"), StateFilter(InstagramStates.waiting_for_highlight_choice))
 async def handle_highlight_download(callback: types.CallbackQuery, state: FSMContext):
     """Download selected highlight(s)."""
     lang = callback.from_user.language_code or "en"
@@ -348,7 +348,7 @@ async def handle_highlight_download(callback: types.CallbackQuery, state: FSMCon
 # Instagram Stories Download Callback
 # ============================================================================
 
-@router.callback_query(F.data.startswith("ig_stories_"))
+@router.callback_query(F.data.startswith("ig_stories_"), StateFilter(InstagramStates.waiting_for_action))
 async def handle_stories_download(callback: types.CallbackQuery, state: FSMContext):
     """Download all active stories for a profile."""
     lang = callback.from_user.language_code or "en"
