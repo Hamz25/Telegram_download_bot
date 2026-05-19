@@ -12,6 +12,8 @@ __pycache__/
 *csv
 data/
 cookies/
+testing/
+
 
 Logic/admin.py
 Logic/utils/user_tracker.py

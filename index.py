@@ -10,10 +10,8 @@ from Logic.Logger import logger
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
-from aiogram.fsm.state import StatesGroup, State
 # Custom modules
 
-from languages import get_text  
 
 from handlers.Social_Media_Handlers.ytHandle import router as youtube_router
 from handlers.Social_Media_Handlers.SpotifyHandle import router as spotify_router
@@ -25,22 +23,32 @@ from handlers.Commands_Handlers.Help_cmd import router as help_router
 from handlers.Commands_Handlers.Report_cmd import router as report_router
 from handlers.Commands_Handlers.Stats_cmd import router as stats_router
 from handlers.Commands_Handlers.Start_cmd import router as start_router
+from handlers.Commands_Handlers.test import router as test_router
+
+from testing.testhandlers.ytHandle_test import router as youtube_router_test
+from testing.testhandlers.SpotifyHandle_test import router as spotify_router_test
+from testing.testhandlers.instagramHandle_test import router as insta_router_test
+from testing.testhandlers.TiktokHandle_test import router as tiktok_router_test
+from testing.testhandlers.snapchatHandle_test import router as snapchat_router_test
+
+
+from testing.testhandlers.cmd_test.Help_cmd_test import router as help_router
+from testing.testhandlers.cmd_test.Report_cmd_test import router as report_router
+from testing.testhandlers.cmd_test.Stats_cmd_test import router as stats_router
+from testing.testhandlers.cmd_test.Start_cmd_test import router as start_router
+
+from testing.testhandlers.adminHandle_test import router as admin_router
+
 
 from handlers.adminHandle import router as admin_router
 
 from Logic.utils.cleanUp import cleanup_old_downloads, check_disk_space, periodic_cleanup
-from Logic.utils.user_tracker import save_user
 
 # Bot metadata
 botname = "-@spoonDbot"
 
 # Initialize dispatcher
 dp = Dispatcher()
-
-# Define FSM states for YouTube quality selection
-class BotStates(StatesGroup):
-    choosing_quality = State()
-
 
 async def on_shutdown(bot: Bot):
     """
@@ -105,12 +113,20 @@ async def main():
         dp.include_router(insta_router)
         dp.include_router(tiktok_router)
         dp.include_router(snapchat_router)
-
+        dp.include_router(test_router)
         dp.include_router(help_router)
         dp.include_router(report_router)
         dp.include_router(stats_router)
         dp.include_router(start_router)
-        
+
+        # only activated when the state is testing
+        dp.include_router(youtube_router_test)
+        dp.include_router(insta_router_test)
+        dp.include_router(spotify_router_test)
+        dp.include_router(tiktok_router_test)
+        dp.include_router(snapchat_router_test)
+
+
         logger.info("✅ All routers registered\n")
         
         # Register startup/shutdown handlers
