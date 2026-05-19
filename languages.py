@@ -19,6 +19,7 @@ TEXTS = {
                     "  **Commands:**\n"
                     "/start - start the bot\n"
                     "/report - Report a problem\n",
+                    "This bot was developed by @dillR_2"
         
         "uploading": "<bold>Downloading and uploading... Please wait.</bold>",
         "fetching": "🔍 Fetching information...",
