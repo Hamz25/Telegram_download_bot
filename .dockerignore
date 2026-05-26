@@ -1,0 +1,31 @@
+# Binaries
+*.exe
+FFMPEG/
+
+# Environment and Temporary Files
+.venv/
+downloads/
+__pycache__/
+*.session
+*.jso
+*csv
+data/
+cookies/
+.env
+
+What_added.txt
+
+# Git and github files
+.git/
+.gitignore
+.github/
+.workflow/
+
+
+#docker files
+dockerfiles/
+docker-compose.yaml
+docker-compose.yml
+Dockerfile
+.dockerignore
+

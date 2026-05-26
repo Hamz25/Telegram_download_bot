@@ -1,0 +1,25 @@
+# Binaries
+*.exe
+FFMPEG/
+
+# Environment and Temporary Files
+.env
+.venv/
+downloads/
+__pycache__/
+*.session
+*.jso
+*csv
+data/
+cookies/
+testing/
+admin_config.json
+
+Logic/admin.py
+Logic/utils/user_tracker.py
+Logic/utils/report_tracker.py
+
+handlers/adminHandler.py
+handlers/Commands_Handlers/Report_cmd.py
+handlers/Commands_Handlers/User_cmd.py
+What_added.txt
