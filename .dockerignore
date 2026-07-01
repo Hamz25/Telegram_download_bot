@@ -12,6 +12,7 @@ __pycache__/
 data/
 cookies/
 .env
+testing/
 
 What_added.txt
 
@@ -23,7 +24,6 @@ What_added.txt
 
 
 #docker files
-dockerfiles/
 docker-compose.yaml
 docker-compose.yml
 Dockerfile

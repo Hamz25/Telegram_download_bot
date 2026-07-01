@@ -25,21 +25,6 @@ from handlers.Commands_Handlers.Stats_cmd import router as stats_router
 from handlers.Commands_Handlers.Start_cmd import router as start_router
 from handlers.Commands_Handlers.test import router as test_router
 
-from testing.testhandlers.ytHandle_test import router as youtube_router_test
-from testing.testhandlers.SpotifyHandle_test import router as spotify_router_test
-from testing.testhandlers.instagramHandle_test import router as insta_router_test
-from testing.testhandlers.TiktokHandle_test import router as tiktok_router_test
-from testing.testhandlers.snapchatHandle_test import router as snapchat_router_test
-
-
-from testing.testhandlers.cmd_test.Help_cmd_test import router as help_router
-from testing.testhandlers.cmd_test.Report_cmd_test import router as report_router
-from testing.testhandlers.cmd_test.Stats_cmd_test import router as stats_router
-from testing.testhandlers.cmd_test.Start_cmd_test import router as start_router
-
-from testing.testhandlers.adminHandle_test import router as admin_router
-
-
 from handlers.adminHandle import router as admin_router
 
 from Logic.utils.cleanUp import cleanup_old_downloads, check_disk_space, periodic_cleanup
@@ -98,7 +83,7 @@ async def main():
     try:
         # Initialize bot with HTML parse mode
         bot = Bot(
-            token=os.getenv("TToken"),
+            token="8859696594:AAHC8xl1qxFiGkx1mQXqdj4Sdb0zSBs29Is",
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         
@@ -107,6 +92,7 @@ async def main():
         logger.info(f"✅ Bot authenticated: @{bot_info.username}")
         
         # Register routers in order of priority
+        dp.include_router(start_router)
         dp.include_router(admin_router)
         dp.include_router(youtube_router)
         dp.include_router(spotify_router)
@@ -117,14 +103,6 @@ async def main():
         dp.include_router(help_router)
         dp.include_router(report_router)
         dp.include_router(stats_router)
-        dp.include_router(start_router)
-
-        # only activated when the state is testing
-        dp.include_router(youtube_router_test)
-        dp.include_router(insta_router_test)
-        dp.include_router(spotify_router_test)
-        dp.include_router(tiktok_router_test)
-        dp.include_router(snapchat_router_test)
 
 
         logger.info("✅ All routers registered\n")
