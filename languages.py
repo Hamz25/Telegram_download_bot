@@ -18,8 +18,9 @@ TEXTS = {
                     "Just send me a <b>link</b> from any supported platform\n\n"
                     "  **Commands:**\n"
                     "/start - start the bot\n"
-                    "/report - Report a problem\n",
-                    "This bot was developed by @dillR_2"
+                    "/report - Report a problem\n"
+                    "This bot was developed by @dillR_2",
+
         "update": "<b>This feature is currently unavailable and will be available in the next update. Thank you for your understanding.</b>",
         "uploading": "<b>Downloading and uploading... Please wait.</b>",
         "fetching": "🔍 Fetching information...",
