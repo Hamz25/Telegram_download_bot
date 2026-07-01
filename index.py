@@ -83,7 +83,7 @@ async def main():
     try:
         # Initialize bot with HTML parse mode
         bot = Bot(
-            token="8859696594:AAHC8xl1qxFiGkx1mQXqdj4Sdb0zSBs29Is",
+            token=os.getenv("BOT_TOKEN"),
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         
