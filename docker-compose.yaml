@@ -1,6 +1,6 @@
 services:
   telegram_download_bot:
-    image: spoon20/telegram_download_bot:v2.2  # Optional: tag the built image for reuse without rebuilding
+    image: spoon20/telegram_download_bot:v2.3  # Optional: tag the built image for reuse without rebuilding
     container_name: telegram_download_bot
 
     restart: unless-stopped
@@ -18,8 +18,6 @@ services:
     # ── Volumes ──────────────────────────────────────────────────────────────
     volumes:
       - ./data:/app/data          # Persistent user data / database
-      - ./Logic:/app/Logic
-      - ./handlers:/app/handlers
       - ./cookies:/app/cookies    # Store cookies for platforms that need them
 
     # ── Resource limits ──────────────────────────────────────────────────────

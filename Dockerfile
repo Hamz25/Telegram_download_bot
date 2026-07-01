@@ -3,7 +3,7 @@
 # Install dependencies in an isolated layer so
 # they are NOT rebuilt every time code changes.
 # ─────────────────────────────────────────────
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 
 COPY requirements.txt .
 
@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 # Only the compiled packages + app code land
 # here — no build tools, no apt cache.
 # ─────────────────────────────────────────────
-FROM python:3.11-slim AS runtime
+FROM python:3.14-slim AS runtime
 
 # Runtime-only system deps for yt-dlp / ffmpeg (audio/video muxing)
 # ffmpeg is tiny on slim and prevents crashes on media downloads
