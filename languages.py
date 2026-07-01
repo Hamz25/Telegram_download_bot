@@ -7,7 +7,7 @@ Provides multilingual text support for the bot interface.
 TEXTS = {
     "en": {
         # General
-        "welcome": "👋 Welcome to <bold>Spoon Download bot</bold>\n\n"
+        "welcome": "👋 Welcome to <b>Spoon Download bot</b>\n\n"
                    "  **Supported Platforms:**\n"
                     "• YouTube (Videos, Shorts, Audio)\n"
                     "• TikTok (Videos, Photos, Audio)\n"
@@ -15,13 +15,13 @@ TEXTS = {
                     "• Snapchat\n"
                     "• Spotify (Audio)\n\n"
                     "  **How to use:**\n"
-                    "Just send me a <bold>link</bold> from any supported platform\n\n"
+                    "Just send me a <b>link</b> from any supported platform\n\n"
                     "  **Commands:**\n"
                     "/start - start the bot\n"
                     "/report - Report a problem\n",
                     "This bot was developed by @dillR_2"
         
-        "uploading": "<bold>Downloading and uploading... Please wait.</bold>",
+        "uploading": "<b>Downloading and uploading... Please wait.</b>",
         "fetching": "🔍 Fetching information...",
         "no_media": "❌ No media found or download failed.",
         "upload_failed": "❌ Upload failed. Please try again.",
@@ -104,11 +104,11 @@ TEXTS = {
     
     "ar": {
         # General
-        "welcome": "<bold>اهلا بكم ببوت سبون</bold>\n\n"
+        "welcome": "<b>اهلا بكم ببوت سبون</b>\n\n"
                     " **المنصات المدعومة:**\n"
-                    "• يوتيوب (فيديوهات، يوتيوب شورت، صوت)\n"
-                    "• تيك توك (فيديوهات، صور، صوت)\n"
-                    "• إنستجرام (ريلز، منشورات)\n"
+                    "• يوتيوب (فيديوهات، يوتيوب شورت， صوت)\n"
+                    "• تيك توك (فيديوهات， صور， صوت)\n"
+                    "• إنستجرام (ريلز， منشورات)\n"
                     "• سناب شات\n"
                     "• سبوتيفاي (صوت)\n\n"
                     " **طريقة الاستخدام:**\n"

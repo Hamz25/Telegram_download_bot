@@ -20,6 +20,7 @@ services:
       - ./data:/app/data          # Persistent user data / database
       - ./Logic:/app/Logic
       - ./handlers:/app/handlers
+      - ./cookies:/app/cookies    # Store cookies for platforms that need them
 
     # ── Resource limits ──────────────────────────────────────────────────────
     # Prevents the bot from eating all RAM/CPU on shared hosts or small VPSes.
