@@ -48,7 +48,7 @@ async def handle_instagram_url(message: types.Message):
                 caption = get_text("insta_stories", lang).format(username=username)
                 await safe_upload(message, path, lang, caption=caption)
             else:
-                await message.answer(get_text("no_media", lang))
+                await message.answer(get_text("update", lang))
 
         elif "/reel/" in url or "/reels/" in url:
             # Reel
@@ -60,7 +60,7 @@ async def handle_instagram_url(message: types.Message):
             if path:
                 await safe_upload(message, path, lang, caption=get_text("spoon", lang))
             else:
-                await message.answer(get_text("no_media", lang))
+                await message.answer(get_text("update", lang))
 
         elif "/p/" in url or "/tv/" in url:
             # Post
@@ -72,7 +72,7 @@ async def handle_instagram_url(message: types.Message):
             if path:
                 await safe_upload(message, path, lang, caption=get_text("insta_post_success", lang))
             else:
-                await message.answer(get_text("no_media", lang))
+                await message.answer(get_text("update", lang))
 
         else:
             await _delete_message_safely(status_msg)
