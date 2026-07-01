@@ -20,7 +20,7 @@ TEXTS = {
                     "/start - start the bot\n"
                     "/report - Report a problem\n",
                     "This bot was developed by @dillR_2"
-        
+        "update": "<b>This feature is currently unavailable and will be available in the next update. Thank you for your understanding.</b>",
         "uploading": "<b>Downloading and uploading... Please wait.</b>",
         "fetching": "🔍 Fetching information...",
         "no_media": "❌ No media found or download failed.",
@@ -105,18 +105,18 @@ TEXTS = {
     "ar": {
         # General
         "welcome": "<b>اهلا بكم ببوت سبون</b>\n\n"
-                    " **المنصات المدعومة:**\n"
+                    " <b>المنصات المدعومة:</b>\n"
                     "• يوتيوب (فيديوهات، يوتيوب شورت， صوت)\n"
                     "• تيك توك (فيديوهات， صور， صوت)\n"
                     "• إنستجرام (ريلز， منشورات)\n"
                     "• سناب شات\n"
                     "• سبوتيفاي (صوت)\n\n"
-                    " **طريقة الاستخدام:**\n"
+                    " <b>طريقة الاستخدام:</b>\n"
                     "فقط أرسل لي رابط من أي منصة مدعومة!\n\n"
-                    " **الأوامر:**\n"
+                    " <b>الأوامر:</b>\n"
                     "/start - لبدء البوت\n"
                     "/report - الإبلاغ عن مشكلة\n",
-        
+        "update":"<b> حاليا هذه الخاصية غير متوفرة ستتوفر في اقرب تحديث شكرا لتفهمكم</b>",
         "uploading": "⏳ جاري التحميل والرفع... الرجاء الانتظار.",
         "fetching": "🔍 جاري جلب المعلومات...",
         "no_media": "❌ لم يتم العثور على ملفات أو فشل التحميل.",
