@@ -275,15 +275,14 @@ async def _upload_media_groups(
             # Create media item
             file_input = FSInputFile(file_path)
             
+            # Add caption to first item only
+            item_caption = caption if (not current_group and caption) else None
+            
             if is_video:
                 thumbnail = _find_thumbnail(file_path)
-                media_item = InputMediaVideo(media=file_input, thumbnail=thumbnail)
+                media_item = InputMediaVideo(media=file_input, thumbnail=thumbnail, caption=item_caption)
             else:
-                media_item = InputMediaPhoto(media=file_input)
-            
-            # Add caption to first item only
-            if not current_group and caption:
-                media_item.caption = caption
+                media_item = InputMediaPhoto(media=file_input, caption=item_caption)
             
             current_group.append(media_item)
             current_group_size += file_size

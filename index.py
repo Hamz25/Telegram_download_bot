@@ -5,6 +5,7 @@ Handles bot initialization, routing, and command processing.
 
 import asyncio 
 import os
+from dotenv import load_dotenv
 from Logic.Logger import logger
 
 from aiogram import Bot, Dispatcher
@@ -12,10 +13,12 @@ from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 # Custom modules
 
+load_dotenv()  # Load environment variables from .env file
 
 from handlers.Social_Media_Handlers.ytHandle import router as youtube_router
 from handlers.Social_Media_Handlers.SpotifyHandle import router as spotify_router
 from handlers.Social_Media_Handlers.instagramHandle import router as insta_router
+from handlers.Social_Media_Handlers.pinterestHandle import router as pinterest_router
 from handlers.Social_Media_Handlers.TiktokHandle import router as tiktok_router
 from handlers.Social_Media_Handlers.snapchatHandle import router as snapchat_router
 
@@ -31,9 +34,6 @@ from Logic.utils.cleanUp import cleanup_old_downloads, check_disk_space, periodi
 
 # Bot metadata
 botname = "-@spoonDbot"
-
-# Initialize dispatcher
-dp = Dispatcher()
 
 async def on_shutdown(bot: Bot):
     """
@@ -81,9 +81,13 @@ async def main():
     Initializes bot, registers routers, and starts polling.
     """
     try:
+        # Fresh dispatcher every run - routers can only be attached once,
+        # so this must not be a module-level singleton reused across restarts.
+        dp = Dispatcher()
+
         # Initialize bot with HTML parse mode
         bot = Bot(
-            token=os.getenv("TToken"),
+            token=os.getenv("TESTBOTT"),
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         
@@ -97,6 +101,7 @@ async def main():
         dp.include_router(youtube_router)
         dp.include_router(spotify_router)
         dp.include_router(insta_router)
+        dp.include_router(pinterest_router)
         dp.include_router(tiktok_router)
         dp.include_router(snapchat_router)
         dp.include_router(test_router)
@@ -128,10 +133,15 @@ if __name__ == "__main__":
     while running:
         try:
             asyncio.run(main())
+            # dp.start_polling() returns normally on a clean shutdown
+            # (e.g. aiogram catches SIGINT internally) - treat that as done,
+            # not as a reason to loop back into main() again.
+            running = False
+
         except KeyboardInterrupt:
             logger.info("⚠️ Bot stopped by user (Ctrl+C)")
             running = False
-            
+
         except Exception as e:
             logger.error(f"❌ Application error: {e}")
             running = False

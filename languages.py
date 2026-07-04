@@ -12,6 +12,7 @@ TEXTS = {
                     "• YouTube (Videos, Shorts, Audio)\n"
                     "• TikTok (Videos, Photos, Audio)\n"
                     "• Instagram (Reels, Posts)\n"
+                    "• Pinterest (Pins, Boards)\n"
                     "• Snapchat\n"
                     "• Spotify (Audio)\n\n"
                     "  **How to use:**\n"
@@ -41,6 +42,8 @@ TEXTS = {
         "snap_success": "✅ Snapchat downloaded successfully!",
         "insta_reel_success": "✅ Instagram Reel downloaded successfully!",
         "insta_post_success": "✅ Instagram Post downloaded successfully!",
+        "pinterest_pin_success": "✅ Pinterest Pin downloaded successfully!",
+        "pinterest_board_success": "✅ Pinterest gallery downloaded successfully!",
         "highlight_success": "✅ Highlight '{title}' downloaded successfully!",
         "all_highlights_success": "✅ All {count} highlights downloaded successfully!",
         "tiktok_audio": "🎵 TikTok Audio",
@@ -110,6 +113,7 @@ TEXTS = {
                     "• يوتيوب (فيديوهات، يوتيوب شورت， صوت)\n"
                     "• تيك توك (فيديوهات， صور， صوت)\n"
                     "• إنستجرام (ريلز， منشورات)\n"
+                    "• بينترست (صور، مجموعات)\n"
                     "• سناب شات\n"
                     "• سبوتيفاي (صوت)\n\n"
                     " <b>طريقة الاستخدام:</b>\n"
@@ -133,12 +137,14 @@ TEXTS = {
         "error_audio": "❌ فشل استخراج الصوت.",
         
         # Success messages
-        "tiktok_success": "✅ تم تحميل التيك توك بنجاح!",
-        "snap_success": "✅ تم تحميل السناب شات بنجاح!",
-        "insta_reel_success": "✅ تم تحميل ريل الإنستجرام بنجاح!",
-        "insta_post_success": "✅ تم تحميل منشور الإنستجرام بنجاح!",
-        "highlight_success": "✅ تم تحميل الهايلايت '{title}' بنجاح!",
-        "all_highlights_success": "✅ تم تحميل جميع الهايلايتس ({count}) بنجاح!",
+        "tiktok_success": "@SpoonDbot",
+        "snap_success": "@SpoonDbot",
+        "insta_reel_success": "@SpoonDbot",
+        "insta_post_success": "@SpoonDbot",
+        "pinterest_pin_success": "@SpoonDbot",
+        "pinterest_board_success": "@SpoonDbot",
+        "highlight_success": "@SpoonDbot",
+        "all_highlights_success": "@SpoonDbot",
         "tiktok_audio": "🎵 صوت تيك توك",
         "tiktok_voice": "🎤 رسالة صوتية من تيك توك",
         

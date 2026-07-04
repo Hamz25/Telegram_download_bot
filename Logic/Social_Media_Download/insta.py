@@ -3,14 +3,16 @@ Instagram Media Downloader
 Module for downloading Instagram posts, reels, stories, and highlights.
 
 Strategy (in order, each only runs if the previous one fails):
-  1. instaloader, anonymous (no login) - works for most public posts/reels.
-  2. instaloader with a session cookie file, if one is configured - needed
-     for content Instagram gates behind a login wall.
-  3. yt-dlp - different extractor entirely, sometimes succeeds where
-     instaloader is rate-limited or blocked.
+  1. gallery-dl, anonymous - uses Instagram's REST API path, works for most
+     public posts/reels even though instaloader's graphql endpoint is 403'd.
+  2. gallery-dl with a cookies.txt (Netscape format) file, if configured -
+     needed for content Instagram gates behind a login wall, and for
+     stories/highlights.
+  3. yt-dlp - different extractor entirely, last resort.
 """
 
 import os
+import shutil
 import asyncio
 import logging
 import instaloader
@@ -23,12 +25,12 @@ logger = logging.getLogger(__name__)
 
 # --- Configuration ---
 
-# NOTE: os.getenv returns None if the var isn't set. Every use of this must
-# go through _has_session() below - never call os.path.exists() on it
-# directly, since os.path.exists(None) raises TypeError (this was the bug
-# causing every download to silently fail before it even started).
+# NOTE: INSTA_COOKIES must be a Netscape/Mozilla format cookies.txt exported
+# from a logged-in browser session (e.g. "Get cookies.txt LOCALLY" extension).
+# An instaloader session file will NOT work here - gallery-dl and yt-dlp both
+# expect the Netscape cookie jar format.
 INSTA_COOKIES: Optional[str] = os.getenv("Insta_cookies")
-INSTA_USERNAME: Optional[str] = os.getenv("Insta_username")  # required by instaloader's session loader
+INSTA_USERNAME: Optional[str] = os.getenv("Insta_username")
 INSTA_PASSWORD = os.getenv("Insta_password")
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -37,13 +39,15 @@ MOBILE_USER_AGENT = (
     "Samsung; SM-G930F; herolte; samsungexynos8890; en_US)"
 )
 
+GALLERY_DL_BIN = shutil.which("gallery-dl") or "gallery-dl"
+
 
 def _has_session() -> bool:
     """True only if a cookie file path is actually set AND exists on disk."""
     return bool(INSTA_COOKIES) and os.path.exists(INSTA_COOKIES)
 
 
-# Initialize Instaloader API
+# Initialize Instaloader API (kept for profile/highlight metadata lookups only)
 L = instaloader.Instaloader(max_connection_attempts=1)
 L.context.user_agent = MOBILE_USER_AGENT
 
@@ -55,40 +59,32 @@ if INSTA_USERNAME and INSTA_PASSWORD:
     except Exception as e:
         logger.error(f"[Instagram] Login failed: {e}")
 elif _has_session():
-    if not INSTA_USERNAME:
-        logger.warning(
-            "[Instagram] Insta_cookies is set but Insta_username is not - "
-            "session load will likely fail. Set Insta_username to the IG "
-            "account the session file belongs to."
-        )
     try:
         L.load_session_from_file(INSTA_USERNAME or "", filename=INSTA_COOKIES)
     except Exception as e:
         logger.warning(f"[Instagram] Failed to load session file: {e}")
 
-# --- instaloader tier ---
+# --- gallery-dl tier ---
 
-async def _run_instaloader(args: list, target_dir: str, use_session: bool) -> Optional[str]:
-    session_args = []
-    if use_session:
-        if INSTA_USERNAME and INSTA_PASSWORD:
-            session_args = ["--login", INSTA_USERNAME, "--password", INSTA_PASSWORD]
-        elif _has_session():
-            session_args = ["--sessionfile", INSTA_COOKIES]
+async def _run_gallery_dl(
+    url: str,
+    target_dir: str,
+    use_cookies: bool,
+    extra_opts: Optional[list] = None,
+) -> Optional[str]:
+    os.makedirs(target_dir, exist_ok=True)
 
-    base_command = [
-        "instaloader",
-        "--dirname-pattern", target_dir,
-        "--filename-pattern", "{shortcode}",
-        "--no-metadata-json",
-        "--no-compress-json",
-        "--no-captions",
-        "--no-profile-pic",
-        "--quiet",
-    ] + session_args
+    command = [GALLERY_DL_BIN, "-D", target_dir, "--no-mtime"]
 
-    command = base_command + args
-    logger.info(f"[Instagram] instaloader ({'session' if use_session else 'anonymous'}): {' '.join(command)}")
+    if use_cookies and _has_session():
+        command += ["--cookies", INSTA_COOKIES]
+
+    if extra_opts:
+        command += extra_opts
+
+    command.append(url)
+
+    logger.info(f"[Instagram] gallery-dl ({'cookies' if use_cookies else 'anonymous'}): {' '.join(command)}")
 
     try:
         process = await asyncio.create_subprocess_exec(
@@ -101,28 +97,25 @@ async def _run_instaloader(args: list, target_dir: str, use_session: bool) -> Op
             stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=120.0)
         except asyncio.TimeoutError:
             process.kill()
-            logger.warning("[Instagram] instaloader timed out after 120 seconds")
+            logger.warning("[Instagram] gallery-dl timed out after 120 seconds")
             return None
 
         if process.returncode != 0:
             error_msg = stderr.decode().strip()
-            logger.info(f"[Instagram] instaloader failed (code {process.returncode}): {error_msg}")
+            logger.info(f"[Instagram] gallery-dl failed (code {process.returncode}): {error_msg}")
             return None
 
-        if os.path.exists(target_dir):
-            for file in os.listdir(target_dir):
-                if "profile_pic" in file:
-                    os.remove(os.path.join(target_dir, file))
-
-            files = os.listdir(target_dir)
-            if files:
-                logger.info(f"[Instagram] instaloader downloaded {len(files)} file(s)")
-                return target_dir
-
+        files = [f for f in os.listdir(target_dir) if not f.startswith(".")] if os.path.exists(target_dir) else []
+        if files:
+            logger.info(f"[Instagram] gallery-dl downloaded {len(files)} file(s)")
+            return target_dir
         return None
 
+    except FileNotFoundError:
+        logger.error("[Instagram] gallery-dl binary not found - pip install gallery-dl")
+        return None
     except Exception as e:
-        logger.error(f"[Instagram] instaloader exception: {e}")
+        logger.error(f"[Instagram] gallery-dl exception: {e}")
         return None
 
 
@@ -143,10 +136,7 @@ async def _try_yt_dlp(url: str, target_dir: str) -> Optional[str]:
         "user_agent": USER_AGENT,
         "noplaylist": True,
     }
-    if INSTA_USERNAME and INSTA_PASSWORD:
-        opts["username"] = INSTA_USERNAME
-        opts["password"] = INSTA_PASSWORD
-    elif _has_session():
+    if _has_session():
         opts["cookiefile"] = INSTA_COOKIES
 
     try:
@@ -163,16 +153,16 @@ async def _try_yt_dlp(url: str, target_dir: str) -> Optional[str]:
     return None
 
 
-async def _download_with_fallback_chain(shortcode_args: list, target_dir: str, url: str) -> Optional[str]:
+async def _download_with_fallback_chain(target_dir: str, url: str) -> Optional[str]:
     """Shared tiered logic used by both posts and reels."""
-    # Tier 1: anonymous instaloader - works for most public content
-    result = await _run_instaloader(shortcode_args, target_dir, use_session=False)
+    # Tier 1: anonymous gallery-dl - works for most public content
+    result = await _run_gallery_dl(url, target_dir, use_cookies=False)
     if result:
         return result
 
-    # Tier 2: instaloader with session/login, if we have one - for gated content
-    if (INSTA_USERNAME and INSTA_PASSWORD) or _has_session():
-        result = await _run_instaloader(shortcode_args, target_dir, use_session=True)
+    # Tier 2: gallery-dl with cookies, if we have one - for gated content
+    if _has_session():
+        result = await _run_gallery_dl(url, target_dir, use_cookies=True)
         if result:
             return result
 
@@ -184,35 +174,23 @@ async def _download_with_fallback_chain(shortcode_args: list, target_dir: str, u
 
 async def download_insta_post(url: str) -> Optional[str]:
     target_dir = generate_target_dir("insta_post")
-    try:
-        shortcode = url.split("/p/")[1].split("/")[0]
-    except (IndexError, ValueError):
-        logger.error(f"[Instagram] Could not parse shortcode from post URL: {url}")
-        return None
-
-    return await _download_with_fallback_chain(["--", f"-{shortcode}"], target_dir, url)
+    return await _download_with_fallback_chain(target_dir, url)
 
 
 async def download_insta_reel(url: str) -> Optional[str]:
     target_dir = generate_target_dir("insta_reel")
-    try:
-        segment = "/reel/" if "/reel/" in url else "/reels/"
-        shortcode = url.split(segment)[1].split("/")[0]
-    except (IndexError, ValueError):
-        logger.error(f"[Instagram] Could not parse shortcode from reel URL: {url}")
-        return None
-
-    return await _download_with_fallback_chain(["--", f"-{shortcode}"], target_dir, url)
+    return await _download_with_fallback_chain(target_dir, url)
 
 
 async def download_insta_story(username: str) -> Optional[str]:
     """Download stories for a username. Stories require a logged-in session by
-    nature (they're not public), so this always needs authentication set."""
-    if not ((INSTA_USERNAME and INSTA_PASSWORD) or _has_session()):
-        logger.warning("[Instagram] Stories require authentication - neither credentials nor cookies configured")
+    nature (they're not public), so this always needs cookies configured."""
+    if not _has_session():
+        logger.warning("[Instagram] Stories require a cookies.txt file - none configured")
         return None
     target_dir = generate_target_dir(f"story_{username}")
-    return await _run_instaloader(["--", f":stories-{username}"], target_dir, use_session=True)
+    url = f"https://www.instagram.com/stories/{username}/"
+    return await _run_gallery_dl(url, target_dir, use_cookies=True)
 
 
 async def download_insta_highlight(username: str, highlight_id: Optional[int] = None) -> Optional[str]:
@@ -226,16 +204,20 @@ async def download_insta_highlight(username: str, highlight_id: Optional[int] = 
     Returns:
         Path to downloaded content or None
     """
-    if not ((INSTA_USERNAME and INSTA_PASSWORD) or _has_session()):
-        logger.warning("[Instagram] Highlights require authentication - neither credentials nor cookies configured")
+    if not _has_session():
+        logger.warning("[Instagram] Highlights require a cookies.txt file - none configured")
         return None
 
     target_dir = generate_target_dir(f"highlight_{username}")
 
     if highlight_id is not None:
-        return await _run_instaloader(["--", f":hl-{highlight_id}"], target_dir, use_session=True)
+        url = f"https://www.instagram.com/stories/highlights/{highlight_id}/"
+        return await _run_gallery_dl(url, target_dir, use_cookies=True)
     else:
-        return await _run_instaloader(["--highlights", "--", username], target_dir, use_session=True)
+        url = f"https://www.instagram.com/{username}/"
+        return await _run_gallery_dl(
+            url, target_dir, use_cookies=True, extra_opts=["-o", "include=highlights"]
+        )
 
 
 # --- Metadata Functions ---

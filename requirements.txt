@@ -38,3 +38,4 @@ uuid
 yarl
 yt-dlp
 ytmusicapi
+gallery-dl
