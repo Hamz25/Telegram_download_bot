@@ -87,7 +87,7 @@ async def main():
 
         # Initialize bot with HTML parse mode
         bot = Bot(
-            token=os.getenv("TESTBOTT"),
+            token=os.getenv("TToken"),
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         

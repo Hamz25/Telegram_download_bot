@@ -39,3 +39,4 @@ yarl
 yt-dlp
 ytmusicapi
 gallery-dl
+dotenv
