@@ -8,6 +8,12 @@ import asyncio
 from aiogram import Router, F, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import (
+    TelegramRetryAfter,
+    TelegramForbiddenError,
+    TelegramBadRequest,
+    TelegramServerError,
+)
 
 from keyboards.admin_buttons import _build_cancel_button, admin_menu_builder
 
@@ -113,17 +119,19 @@ async def broadcast_button(query: types.CallbackQuery, state: FSMContext):
 async def receive_broadcast(message: types.Message, state: FSMContext):
     """
     Receive and distribute broadcast message to all users.
-    
-    Processes message delivery with error handling and reports statistics.
+
+    Processes message delivery with proper rate-limit handling
+    (respects Telegram's retry_after), separates blocked users from
+    genuine failures, and reports final statistics.
     """
     broadcast_message = message.text.strip()
-    
+
     # Check for cancel
     if broadcast_message.lower() == "cancel":
         await message.answer("✅ Operation cancelled.")
         await state.clear()
         return
-    
+
     user_ids = get_all_user_ids()
 
     if not user_ids:
@@ -139,26 +147,71 @@ async def receive_broadcast(message: types.Message, state: FSMContext):
 
     sent = 0
     failed = 0
+    blocked_users = []
 
     # Distribute message to all users
     for user_id in user_ids:
         try:
             await message.bot.send_message(
-                chat_id=user_id, 
+                chat_id=user_id,
                 text=f"{broadcast_message}"
             )
             sent += 1
-            await asyncio.sleep(0.1)  # Rate limiting
-        except Exception as e:
+
+        except TelegramRetryAfter as e:
+            # Telegram is explicitly telling us how long to wait — respect it,
+            # then retry this user once before moving on.
+            print(f"⏳ Flood control hit, sleeping {e.retry_after}s")
+            await asyncio.sleep(e.retry_after)
+            try:
+                await message.bot.send_message(
+                    chat_id=user_id,
+                    text=f"{broadcast_message}"
+                )
+                sent += 1
+            except Exception as e2:
+                print(f"⚠️ Retry failed for {user_id}: {e2}")
+                failed += 1
+
+        except TelegramForbiddenError:
+            # User blocked the bot / deactivated account
+            failed += 1
+            blocked_users.append(user_id)
+
+        except (TelegramBadRequest, TelegramServerError) as e:
+            # Invalid chat id, or a transient Telegram-side issue
             print(f"⚠️ Failed to send to user {user_id}: {e}")
             failed += 1
 
-    # Send final report
-    await status.edit_text(
-        f"✅ Broadcast complete!\n\n"
-        f"📤 Sent: {sent}/{len(user_ids)}\n"
-        f"❌ Failed: {failed}"
-    )
+        except Exception as e:
+            print(f"⚠️ Unexpected error sending to user {user_id}: {e}")
+            failed += 1
+
+        # Baseline delay to stay safely under bot-wide rate limits
+        await asyncio.sleep(0.15)
+
+    # Optional: stop tracking users who blocked the bot so future broadcasts skip them.
+    # Implement remove_user_id() in Logic/utils/user_tracker.py if you want this.
+    # for uid in blocked_users:
+    #     remove_user_id(uid)
+
+    # Never let a Telegram-side hiccup on the final report crash the handler
+    try:
+        await status.edit_text(
+            f"✅ Broadcast complete!\n\n"
+            f"📤 Sent: {sent}/{len(user_ids)}\n"
+            f"❌ Failed: {failed}\n"
+            f"🚫 Blocked bot: {len(blocked_users)}"
+        )
+    except Exception as e:
+        print(f"⚠️ Failed to edit final status message: {e}")
+        try:
+            await message.answer(
+                f"✅ Broadcast complete! Sent: {sent}/{len(user_ids)}, Failed: {failed}"
+            )
+        except Exception as e2:
+            print(f"⚠️ Failed to send fallback final status message: {e2}")
+
     print(
         f"[Admin] Broadcast sent by {message.from_user.id} to {sent} users, {failed} failed"
     )

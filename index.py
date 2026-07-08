@@ -5,7 +5,6 @@ Handles bot initialization, routing, and command processing.
 
 import asyncio 
 import os
-from dotenv import load_dotenv
 from Logic.Logger import logger
 
 from aiogram import Bot, Dispatcher
@@ -13,7 +12,6 @@ from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 # Custom modules
 
-load_dotenv()  # Load environment variables from .env file
 
 from handlers.Social_Media_Handlers.ytHandle import router as youtube_router
 from handlers.Social_Media_Handlers.SpotifyHandle import router as spotify_router

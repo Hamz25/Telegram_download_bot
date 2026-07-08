@@ -23,3 +23,5 @@ handlers/adminHandler.py
 handlers/Commands_Handlers/Report_cmd.py
 handlers/Commands_Handlers/User_cmd.py
 What_added.txt
+
+index_test.py
