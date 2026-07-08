@@ -1,6 +1,6 @@
 services:
   telegram_download_bot:
-    image: spoon20/telegram_download_bot:v2.4  # Optional: tag the built image for reuse without rebuilding
+    image: spoon20/telegram_download_bot:2.4  # Optional: tag the built image for reuse without rebuilding
     container_name: telegram_download_bot
 
     restart: unless-stopped
