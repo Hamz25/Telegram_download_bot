@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  
           pip install pytest
-      - run: pytest --tb=short
+      - run: python -m pytest --tb=short
         env:
           BOT_TOKEN_TEST: ${{ secrets.BOT_TOKEN_TEST }}
 
