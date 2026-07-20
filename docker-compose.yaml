@@ -5,6 +5,8 @@ services:
       target: runtime-deployment
     image: spoon20/telegram_download_bot:latest  # Optional: tag the built image for reuse without rebuilding
     container_name: telegram_download_bot
+    profiles:
+      - deployment
 
     restart: unless-stopped
 
@@ -60,6 +62,7 @@ services:
     container_name: telegram_download_bot_test
     profiles:
       - testing
+    restart: unless-stopped
     env_file:
       - .env
     environment:

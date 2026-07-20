@@ -1,4 +1,4 @@
-name: test and deploy  
+name: test and deploy 
 
 on:
   push:
@@ -24,8 +24,8 @@ jobs:
           pip install -r requirements.txt  
           pip install pytest
 #      - run: python -m pytest --tb=short
-        env:
-          BOT_TOKEN_TEST: ${{ secrets.BOT_TOKEN_TEST }}
+#        env:
+#         BOT_TOKEN_TEST: ${{ secrets.BOT_TOKEN_TEST }}
 
   build-and-push:
     needs: test
@@ -80,6 +80,8 @@ jobs:
           script: |
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             cd ~/Telegram_download_bot
-            docker compose pull
-            docker compose up -d
+            git fetch origin
+            git reset --hard origin/main
+            docker compose --profile deployment pull telegram_download_bot
+            docker compose --profile deployment up -d telegram_download_bot
             docker image prune -f
