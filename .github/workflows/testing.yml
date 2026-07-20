@@ -81,6 +81,6 @@ jobs:
           script: |
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             cd ~/Telegram_download_bot
-            docker compose --profile testing pull telegram_download_bot
-            docker compose --profile testing up -d telegram_download_bot
+            docker compose --profile testing pull telegram_download_bot_test
+            docker compose --profile testing up -d telegram_download_bot_test
             docker image prune -f
