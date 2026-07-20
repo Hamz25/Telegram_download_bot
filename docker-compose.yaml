@@ -1,5 +1,8 @@
 services:
   telegram_download_bot:
+    build:
+      context: .
+      target: runtime-deployment
     image: spoon20/telegram_download_bot:latest  # Optional: tag the built image for reuse without rebuilding
     container_name: telegram_download_bot
 
@@ -48,3 +51,20 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  telegram_download_bot_test:
+    build:
+      context: .
+      target: runtime-test
+    image: spoon20/telegram_download_bot:latest-test
+    container_name: telegram_download_bot_test
+    profiles:
+      - testing
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./data:/app/data
+      - ./cookies:/app/cookies

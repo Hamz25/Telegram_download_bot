@@ -5,7 +5,10 @@ Handles uploading media files to Telegram with proper error handling and cleanup
 
 import os
 import glob
+import json
+import subprocess
 import asyncio
+from typing import Optional, Dict
 from pathlib import Path
 from aiogram import types
 from aiogram.types import FSInputFile, InputMediaPhoto, InputMediaVideo
@@ -16,6 +19,12 @@ from Logic.utils.cleanUp import cleanup
 MAX_CHUNK_SIZE = 45 * 1024 * 1024  # 45MB per media group
 MAX_SINGLE_FILE = 50 * 1024 * 1024 # 50MB per file
 MAX_GROUP_SIZE = 10                 # Max 10 items per media group
+
+# ffmpeg/ffprobe binaries - overridable per environment (e.g. SpoonLab uses
+# the .exe binaries checked into the repo root, spoonserver would point
+# these at a Linux install). Defaults to whatever's on PATH.
+FFMPEG_BIN = os.getenv("FFMPEG_PATH", "ffmpeg")
+FFPROBE_BIN = os.getenv("FFPROBE_PATH", "ffprobe")
 
 async def safe_upload(
     message: types.Message, 
@@ -113,8 +122,11 @@ async def _upload_single_file(
         )
         return
     
-    # Find thumbnail for videos
+    # Find (or generate) thumbnail + metadata for videos, so Telegram can
+    # render an instant poster frame instead of a black placeholder while
+    # it processes the file itself.
     thumbnail = _find_thumbnail(file_path) if media_type == "video" else None
+    metadata = _get_video_metadata(file_path) if media_type == "video" else {}
     
     try:
         input_file = FSInputFile(file_path)
@@ -131,7 +143,11 @@ async def _upload_single_file(
             await message.answer_video(
                 input_file, 
                 caption=caption,
-                thumbnail=thumbnail
+                thumbnail=thumbnail,
+                width=metadata.get("width"),
+                height=metadata.get("height"),
+                duration=metadata.get("duration"),
+                supports_streaming=True,
             )
         else:  # photo
             await message.answer_photo(input_file, caption=caption)
@@ -242,7 +258,14 @@ async def _upload_media_groups(
             for item in current_group:
                 try:
                     if isinstance(item, InputMediaVideo):
-                        await message.answer_video(item.media, thumbnail=item.thumbnail)
+                        await message.answer_video(
+                            item.media,
+                            thumbnail=item.thumbnail,
+                            width=item.width,
+                            height=item.height,
+                            duration=item.duration,
+                            supports_streaming=True,
+                        )
                     else:
                         await message.answer_photo(item.media)
                     await asyncio.sleep(1)
@@ -280,7 +303,16 @@ async def _upload_media_groups(
             
             if is_video:
                 thumbnail = _find_thumbnail(file_path)
-                media_item = InputMediaVideo(media=file_input, thumbnail=thumbnail, caption=item_caption)
+                metadata = _get_video_metadata(file_path)
+                media_item = InputMediaVideo(
+                    media=file_input,
+                    thumbnail=thumbnail,
+                    caption=item_caption,
+                    width=metadata.get("width"),
+                    height=metadata.get("height"),
+                    duration=metadata.get("duration"),
+                    supports_streaming=True,
+                )
             else:
                 media_item = InputMediaPhoto(media=file_input, caption=item_caption)
             
@@ -294,12 +326,99 @@ async def _upload_media_groups(
     await send_current_group()
 
 
-def _find_thumbnail(video_path: str) -> FSInputFile:
+def _get_video_metadata(video_path: str) -> Dict:
+    """
+    Probe a video with ffprobe for width/height/duration.
+
+    Telegram uses this metadata (together with the thumbnail) to render the
+    message instantly. Without it, Telegram has to inspect/process the raw
+    video file itself before it can show anything, which is what produces
+    the black placeholder on larger files.
+
+    Returns an empty dict if ffprobe is unavailable or the probe fails -
+    callers already treat missing keys as "let Telegram figure it out",
+    so this fails safe.
+    """
+    try:
+        result = subprocess.run(
+            [
+                FFPROBE_BIN, "-v", "error",
+                "-select_streams", "v:0",
+                "-show_entries", "stream=width,height:format=duration",
+                "-of", "json",
+                video_path,
+            ],
+            capture_output=True, text=True, timeout=15,
+        )
+        data = json.loads(result.stdout or "{}")
+        streams = data.get("streams") or [{}]
+        stream = streams[0]
+        duration_raw = data.get("format", {}).get("duration")
+
+        return {
+            "width": stream.get("width"),
+            "height": stream.get("height"),
+            "duration": int(float(duration_raw)) if duration_raw else None,
+        }
+    except FileNotFoundError:
+        print("[Uploader] ffprobe not found on PATH — skipping video metadata.")
+        return {}
+    except Exception as e:
+        print(f"[Uploader] ffprobe metadata failed for {video_path}: {e}")
+        return {}
+
+
+def _generate_thumbnail(video_path: str) -> Optional[str]:
+    """
+    Extract a poster frame into a sidecar jpg next to the video, e.g.
+    media_001.mp4 -> media_001.jpg.
+
+    This matches the exact naming convention _find_thumbnail already looks
+    for, and _is_thumbnail_file already filters that pattern out of
+    carousel uploads - so generating it here is a drop-in fix with no
+    other logic needing to change.
+
+    Grabs the frame at 1s in (skips potential black opening frames some
+    platforms leave), falling back to the very first frame for clips
+    shorter than 1s.
+    """
+    base_name = os.path.splitext(video_path)[0]
+    thumb_path = base_name + ".jpg"
+
+    if os.path.exists(thumb_path):
+        return thumb_path
+
+    def _extract(seek_args: list) -> bool:
+        try:
+            subprocess.run(
+                [FFMPEG_BIN, "-y", *seek_args, "-i", video_path,
+                 "-frames:v", "1", "-q:v", "2", thumb_path],
+                capture_output=True, timeout=15,
+            )
+        except Exception as e:
+            print(f"[Uploader] ffmpeg thumbnail generation failed for {video_path}: {e}")
+            return False
+        return os.path.exists(thumb_path) and os.path.getsize(thumb_path) > 0
+
+    try:
+        if _extract(["-ss", "00:00:01"]):
+            return thumb_path
+        # Clip shorter than 1s - retry from the very start.
+        if _extract([]):
+            return thumb_path
+    except FileNotFoundError:
+        print("[Uploader] ffmpeg not found on PATH — cannot generate thumbnails.")
+
+    return None
+
+
+def _find_thumbnail(video_path: str) -> Optional[FSInputFile]:
     """
     Find thumbnail file for a video.
     
-    Looks for image file with same base name as the video.
-    Common pattern: video.mp4 -> video.jpg
+    Looks for an image file with the same base name as the video first
+    (e.g. video.mp4 -> video.jpg). If none exists, generates one from the
+    video itself via ffmpeg.
     
     Args:
         video_path: Path to video file
@@ -317,6 +436,13 @@ def _find_thumbnail(video_path: str) -> FSInputFile:
                 return FSInputFile(thumb_path)
             except Exception as e:
                 print(f"[Uploader] Failed to load thumbnail {thumb_path}: {e}")
+
+    generated = _generate_thumbnail(video_path)
+    if generated:
+        try:
+            return FSInputFile(generated)
+        except Exception as e:
+            print(f"[Uploader] Failed to load generated thumbnail {generated}: {e}")
     
     return None
 

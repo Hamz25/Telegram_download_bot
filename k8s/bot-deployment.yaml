@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: telegram-bot
+spec: 
+  replicas: 1
+  strategy: 
+    type: Recreate
+  selector:
+    matchLabels: 
+      app: telegram-bot
+  template: 
+    metadata:
+      labels:            
+        app: telegram-bot
+    spec: 
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: bot
+          image: spoon20/telegram_download_bot:latest
+          resources:
+            requests:
+              cpu: "2"
+              memory: "2Gi"
+            limits:
+              cpu: "3"
+              memory: "4Gi"
+          envFrom:
+            - configMapRef: 
+                name: bot-config
+          env:
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef: 
+                  name: bot-secrets
+                  key: bot-token
+          volumeMounts:   
+            - name: bot-data
+              mountPath: /app/data
+            - name: cookies
+              mountPath: /app/cookies
+              readOnly: true
+
+      volumes:            
+        - name: bot-data 
+          persistentVolumeClaim:
+            claimName: bot-data-pvc
+        - name: cookies
+          secret: 
+            secretName: platform-cookies
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: bot-data-pvc
+spec:
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 5Gi
+  storageClassName: standard

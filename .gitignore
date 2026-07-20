@@ -13,7 +13,7 @@ __pycache__/
 data/
 cookies/
 testing/
-
+learning/
 
 Logic/admin.py
 Logic/utils/user_tracker.py

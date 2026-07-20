@@ -38,16 +38,19 @@ TEXTS = {
         "error_audio": "❌ Audio extraction failed.",
         
         # Success messages
-        "tiktok_success": "✅ TikTok downloaded successfully!",
-        "snap_success": "✅ Snapchat downloaded successfully!",
-        "insta_reel_success": "✅ Instagram Reel downloaded successfully!",
-        "insta_post_success": "✅ Instagram Post downloaded successfully!",
-        "pinterest_pin_success": "✅ Pinterest Pin downloaded successfully!",
-        "pinterest_board_success": "✅ Pinterest gallery downloaded successfully!",
-        "highlight_success": "✅ Highlight '{title}' downloaded successfully!",
-        "all_highlights_success": "✅ All {count} highlights downloaded successfully!",
-        "tiktok_audio": "🎵 TikTok Audio",
-        "tiktok_voice": "🎤 TikTok Voice Message",
+        "tiktok_success": "@SpoonDbot",
+        "snap_success": "@SpoonDbot",
+        "insta_reel_success": "@SpoonDbot",
+        "insta_post_success": "@SpoonDbot",
+        "pinterest_pin_success": "@SpoonDbot",
+        "pinterest_board_success": "@SpoonDbot",
+        "highlight_success": "@SpoonDbot",
+        "all_highlights_success": "@SpoonDbot",
+        "tiktok_audio": "@SpoonDbot",
+        "tiktok_voice": "@SpoonDbot",
+        "x_success": "@SpoonDbot",
+        "threads_sucess": "@SpoonDbot",
+        "facebook_success": "@SpoonDbot",
         
         # Instagram specific
         "insta_stories": " Stories from @{username}",
@@ -145,8 +148,11 @@ TEXTS = {
         "pinterest_board_success": "@SpoonDbot",
         "highlight_success": "@SpoonDbot",
         "all_highlights_success": "@SpoonDbot",
-        "tiktok_audio": "🎵 صوت تيك توك",
-        "tiktok_voice": "🎤 رسالة صوتية من تيك توك",
+        "tiktok_audio": "@SpoonDbot",
+        "tiktok_voice": "@SpoonDbot",
+        "x_success": "@SpoonDbot",
+        "threads_sucess": "@SpoonDbot",
+        "facebook_success": "@SpoonDbot",
         
         # Instagram specific
         "insta_stories": "📸 ستوريات @{username}",
@@ -172,12 +178,12 @@ TEXTS = {
                            "🔐 **خاص:** {private}",
         
         "profile_not_found": "❌ لم يتم العثور على الحساب @{username}.",
-        "no_bio": "لا توجد سيرة ذاتية",
-        "no_highlights": "ℹ️ لم يتم العثور على هايلايتس لـ @{username}.",
-        "no_active_stories": "ℹ️ لم يتم العثور على ستوريات نشطة لـ @{username}.",
-        "downloading_stories": "📥 جاري تحميل الستوريات...",
-        "downloading_highlight": "📥 جاري تحميل الهايلايت...",
-        "select_highlight": "📋 اختر هايلايت للتحميل ({count} متاح):",
+        "no_bio": "لا يوجد بايو",
+        "no_highlights": " لم يتم العثور على هايلايتس لـ @{username}.",
+        "no_active_stories": "لم يتم العثور على ستوريات نشطة لـ @{username}.",
+        "downloading_stories": "جار تحميل الستوريات...",
+        "downloading_highlight": "جار تحميل الهايلايت...",
+        "select_highlight": "اختر هايلايت للتحميل ({count} متاح):",
         
         # YouTube specific
         "shorts_detected": "🎬 تم اكتشاف فيديو قصير من يوتيوب! جاري التحميل...",
@@ -185,13 +191,13 @@ TEXTS = {
         "choose_format": "🎬 **خيارات التحميل**\n\nاختر التنسيق:",
         
         # Buttons
-        "btn_video": "📹 فيديو",
-        "btn_audio": "🎵 صوت",
-        "btn_voice": "🎤 رسالة صوتية",
-        "btn_profile_details": "📊 تفاصيل الحساب",
-        "btn_highlights": "📚 الهايلايتس",
-        "btn_stories": "📸 الستوريات",
-        "btn_download_all_highlights": "📥 تحميل كل الهايلايتس",
+        "btn_video": "فيديو",
+        "btn_audio": " صوت",
+        "btn_voice": "رسالة صوتية",
+        "btn_profile_details": "تفاصيل الحساب",
+        "btn_highlights": "الهايلايت",
+        "btn_stories": " الستوريات",
+        "btn_download_all_highlights": " تحميل كل الهايلايت",
         
         # Yes/No
         "yes": "نعم",
