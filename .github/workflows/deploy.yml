@@ -28,16 +28,16 @@ jobs:
 #         BOT_TOKEN_TEST: ${{ secrets.BOT_TOKEN_TEST }}
 
   build-and-push:
-    needs: test
+    needs: test # it needs to pass the test job before it can run
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # checkout the code so that we can build the docker image
 
-      - name: Set up QEMU
+      - name: Set up QEMU # set the virtualization environment for building multi-platform images
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
+      - name: Set up Docker Buildx # buildx is important for building multi-platform images
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
